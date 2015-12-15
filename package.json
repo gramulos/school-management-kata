@@ -1,0 +1,26 @@
+{
+  "name": "school-management-kata",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "testw": "node_modules/.bin/mocha -c -w --reporter spec ./test/**/*.js",
+    "test": "node_modules/.bin/mocha -c --reporter spec ./test/**/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anara123/school-management-kata.git"
+  },
+  "keywords": [],
+  "author": "Anar Azadaliyev <anar.azadaliyev@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/anara123/school-management-kata/issues"
+  },
+  "homepage": "https://github.com/anara123/school-management-kata#readme",
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "mocha": "^2.3.4",
+    "sinon": "^1.17.2"
+  }
+}
