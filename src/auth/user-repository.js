@@ -4,7 +4,11 @@ var UserRepository = {
 
     findByIdNumber: function (idNumber, done) {
 
+    },
+    insertUser:function(user,done){
+
     }
+
 }
 
 

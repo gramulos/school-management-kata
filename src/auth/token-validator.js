@@ -6,13 +6,12 @@ var TokenValidator = {
     },
 
     validate: function (token, done) {
-        console.log('##### token validate ');
         var testAccount = {
             username: 'anar',
             role: 'ADMIN'
         };
 
-        done(null, testAccount)
+        done(null, testAccount);
     }
 };
 

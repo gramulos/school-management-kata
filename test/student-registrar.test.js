@@ -17,7 +17,6 @@ describe('StudentRegistrar test', function () {
     describe('#register new student', function() {
 
         var studentRegistrar;
-        var token = 'accessToken';
         var studentRegistrationForm;
 
         var tokenValidatorSpy;

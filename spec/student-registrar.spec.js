@@ -10,7 +10,7 @@ var UserRepository = require('../src/auth/user-repository');
 var SchoolRepository = require('../src/school/school-repository');
 
 
-describe('StudentRegistrar test', function () {
+describe.skip('StudentRegistrar test', function () {
 
     describe('#register new student', function() {
 
