@@ -18,6 +18,7 @@ var ErrorCodes = {
     HAS_NO_PERMISSION: ApplicationErrorFactory.create(106, 'User has no permission'),
     INVALID_FORM: ApplicationErrorFactory.create(107, 'Form is not valid'),
     LOGIN_FAILED: ApplicationErrorFactory.create(108, 'Username or password is incorrect'),
+    INVALID_USER_FORM: ApplicationErrorFactory.create(109, 'User form is invalid'),
 };
 
 module.exports = ErrorCodes;

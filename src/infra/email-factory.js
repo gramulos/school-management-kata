@@ -19,6 +19,10 @@ var EmailFactory = {
         newEmail.init(user);
 
         return newEmail;
+    },
+
+    createAccountDetailsEmail: function (args) {
+
     }
 };
 

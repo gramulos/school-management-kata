@@ -5,31 +5,28 @@ var sinon = require('sinon');
 
 var UserRegistrarFactory = require('../src/users/user-registrar');
 
-var AccountGeneratorFactory = require('../src/users/account-generator');
+var AccountGeneratorFactory = require('../src/users/account-params-generator');
 var UserFactory = require('../src/users/user-creator');
 var UserSaverFactory = require('../src/users/user-saver');
+var UserFormValidatorFactory = require('../src/users/user-form-validator');
+var AccountFactory = require('../src/users/account-factory');
+
+var Role = require('../src/infra/role');
 
 describe('testing user registrar', function(){
 
     describe('#generate user account', function(){
         var userRegistrar;
-        var studentRegistrationForm;
+        var input = {};
 
         var accountGeneratorSpy;
         var userCreatorSpy;
         var userSaverSpy;
+        var accountFactorySpy;
+        var userFormValidatorSpy;
 
         before(function(beforeDone){
-
-            var accountGenerator = AccountGeneratorFactory.create();
-            accountGeneratorSpy = sinon.spy(accountGenerator, 'generate');
-
-            userCreatorSpy = sinon.spy(UserFactory, 'create');
-
-            var userSaver = UserSaverFactory.create();
-            userSaverSpy = sinon.spy(userSaver, 'save');
-
-            studentRegistrationForm = {
+            input.studentRegistrationForm = {
                 firstName: 'rufet',
                 lastName: 'isayev',
                 idNumber: '5ZJBKRJ',
@@ -38,14 +35,31 @@ describe('testing user registrar', function(){
                 imageUrl: 'rufet@images.com'
             };
 
+            var accountGenerator = AccountGeneratorFactory.create({
+                emailAddress: input.studentRegistrationForm.email
+            });
+
+            var userFormValidator = UserFormValidatorFactory.create();
+            userFormValidatorSpy = sinon.spy(userFormValidator, 'validate');
+
+            accountGeneratorSpy = sinon.spy(accountGenerator, 'generate');
+
+            accountFactorySpy = sinon.spy(AccountFactory, 'create');
+
+            userCreatorSpy = sinon.spy(UserFactory, 'create');
+
+            var userSaver = UserSaverFactory.create();
+            userSaverSpy = sinon.spy(userSaver, 'save');
+
             userRegistrar = UserRegistrarFactory.create({
+                userFormValidator: userFormValidator,
                 accountGenerator: accountGenerator,
                 userCreator: UserFactory,
                 userSaver: userSaver
 
             });
 
-            userRegistrar.register(studentRegistrationForm, function(err, isSaved){
+            userRegistrar.register(Role.ADMIN, input.studentRegistrationForm, function(err, isSaved){
                 beforeDone();
             });
 
@@ -66,13 +80,16 @@ describe('testing user registrar', function(){
 
         it('should called in correct order', function(){
             sinon.assert.callOrder(
+                userFormValidatorSpy,
                 accountGeneratorSpy,
+                accountFactorySpy,
                 userCreatorSpy,
                 userSaverSpy
             )
         });
 
         after(function(){
+            accountFactorySpy.restore();
             userCreatorSpy.restore();
         })
     })
