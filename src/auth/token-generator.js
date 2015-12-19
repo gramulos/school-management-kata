@@ -1,7 +1,7 @@
 'use strict';
 
 var TokenGenerator = {
-    init: function () {
+    init: function (args) {
 
     },
     generate: function (userId,role,done) {
@@ -13,9 +13,9 @@ var TokenGenerator = {
 };
 
 var TokenGeneratorFactory = {
-    create:function(){
+    create:function(args){
         var tokenGenerator = Object.create(TokenGenerator);
-        tokenGenerator.init();
+        tokenGenerator.init(args);
         return tokenGenerator;
     }
 };

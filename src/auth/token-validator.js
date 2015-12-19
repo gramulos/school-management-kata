@@ -16,9 +16,9 @@ var TokenValidator = {
 };
 
 var TokenValidatorFactory = {
-    create: function() {
+    create: function(args) {
         var validator = Object.create(TokenValidator);
-        validator.init();
+        validator.init(args);
         return validator;
     }
 };

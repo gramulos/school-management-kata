@@ -1,19 +1,19 @@
 'use strict';
 
 var UserSaver = {
-    init:function(){
+    init:function(args){
 
     },
 
-    save: function(){
-
+    save: function(user,done){
+        done(null, user);
     }
 };
 
 var UserSaverFactory = {
-    create: function(){
+    create: function(args){
         var userSaver = Object.create(UserSaver);
-        userSaver.init();
+        userSaver.init(args);
         return userSaver;
     }
 };

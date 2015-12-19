@@ -1,15 +1,15 @@
 'use strict';
 
 var User = {
-    init: function(){
+    init: function(args){
 
     }
 };
 
 var UserCreator = {
-    create:function(){
+    create:function(args){
         var user = Object.create(User);
-        user.init();
+        user.init(args);
         return user;
     }
 };

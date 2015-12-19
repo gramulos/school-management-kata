@@ -23,7 +23,7 @@ var LoginManager = {
             function validatePassword(user, next) {
                 var account = user.getAccount();
                 var isPasswordMatch = self.passwordValidator.validate(loginUser.password, account.hashedPassword);
-                return next(null, { isPasswordMatch: isPasswordMatch, account: account });
+                return next(null, {isPasswordMatch: isPasswordMatch, account: account});
             },
 
             function generateToken(passwordValidationResult, next) {

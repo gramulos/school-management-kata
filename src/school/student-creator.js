@@ -20,9 +20,9 @@ var StudentCreator = {
 };
 
 var StudentCreatorFactory = {
-    create: function() {
+    create: function(args) {
         var studentCreator = Object.create(StudentCreator);
-        studentCreator.init();
+        studentCreator.init(args);
         return studentCreator;
     }
 };

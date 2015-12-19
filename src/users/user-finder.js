@@ -1,7 +1,7 @@
 'use strict';
 
 var UserFinder = {
-    init: function () {
+    init: function (args) {
 
     },
     find: function (userName,done) {
@@ -9,9 +9,9 @@ var UserFinder = {
 };
 
 var UserFinderFactory = {
-    create: function () {
+    create: function (args) {
         var userFinder = Object.create(UserFinder);
-        userFinder.init();
+        userFinder.init(args);
         return userFinder;
     }
 };

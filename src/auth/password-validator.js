@@ -1,18 +1,18 @@
 'use strict';
 
 var PasswordValidator = {
-    init: function () {
+    init: function (args) {
 
     },
-    validate: function () {
+    validate: function (args) {
 
     }
 };
 
 var PasswordValidatorFactory = {
-    create:function(){
+    create: function (args) {
         var passwordValidator = Object.create(PasswordValidator);
-        passwordValidator.init();
+        passwordValidator.init(args);
         return passwordValidator;
     }
 };

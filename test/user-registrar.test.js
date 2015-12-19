@@ -3,8 +3,6 @@ var chai = require('chai');
 var assert = chai.assert;
 var sinon = require('sinon');
 
-
-var UserRepository = require('../src/auth/user-repository');
 var UserRegistrarFactory = require('../src/users/user-registrar');
 
 var AccountGeneratorFactory = require('../src/users/account-generator');
@@ -40,9 +38,14 @@ describe('testing user registrar', function(){
                 imageUrl: 'rufet@images.com'
             };
 
-            userRegistrar = UserRegistrarFactory.create();
+            userRegistrar = UserRegistrarFactory.create({
+                accountGenerator: accountGenerator,
+                userCreator: UserFactory,
+                userSaver: userSaver
 
-            userRegistrar.register(studentRegistrationForm, function(err, user){
+            });
+
+            userRegistrar.register(studentRegistrationForm, function(err, isSaved){
                 beforeDone();
             });
 

@@ -1,7 +1,7 @@
 'use strict';
 
 var Authorizer = {
-    init: function(args) {
+    init: function (args) {
 
     },
 
@@ -12,9 +12,9 @@ var Authorizer = {
 };
 
 var AuthorizerFactory = {
-    create: function() {
+    create: function (args) {
         var authorizer = Object.create(Authorizer);
-        authorizer.init();
+        authorizer.init(args);
         return authorizer;
     }
 };

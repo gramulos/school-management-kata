@@ -1,20 +1,19 @@
 'use strict';
 
 var AccountGenerator = {
-    init: function () {
+    init: function (args) {
 
     },
 
-    generate: function () {
-
+    generate: function (form) {
     }
 
 };
 
 var AccountGeneratorFactory = {
-    create: function () {
+    create: function (args) {
         var accountGenerator = Object.create(AccountGenerator);
-        accountGenerator.init();
+        accountGenerator.init(args);
         return accountGenerator;
     }
 };
