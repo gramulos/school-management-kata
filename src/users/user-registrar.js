@@ -1,7 +1,8 @@
 'use strict';
+
 var async = require('async');
 var UserFactory = require('./user-creator');
-//var AccountGeneratorFactory = require('account-params-generator');
+//var AccountParamsGeneratorFactory = require('account-params-generator');
 var UserSaverFactory = require('./user-saver');
 var AccountFactory = require('./account-factory');
 
@@ -11,7 +12,8 @@ var UserRegistrar = {
     init: function (args) {
         args = args || {};
         this.userFormValidator = args.userFormValidator;
-        this.accountGenerator = args.accountGenerator;
+        this.accountGenerator = args.accountParamsGenerator;
+        this.accountFormValidator = args.accountFormValidator;
         this.userSaver = args.userSaver || UserSaverFactory.create();
     },
 
@@ -33,14 +35,28 @@ var UserRegistrar = {
                 self.accountGenerator.generate(userRegistrationForm, next);
             },
 
-            function createAccountFromParams(accountParams, next) {
-                var account = AccountFactory.create({
-                    username: accountParams.username,
-                    password: accountParams.password,
-                    role: role
+            function validateAccountForm(accountParams, next) {
+                self.accountFormValidator.validate(accountParams,function(err,result){
+                    next(null, {isAccountValid: result, accountParams: accountParams});
                 });
 
-                return next(null, account);
+                //return next(null, {isAccountValid: isAccountValid, accountParams: accountParams})
+            },
+
+            function createAccountFromParams(accountForm, next) {
+                console.log(accountForm)
+                if(accountForm) {
+                    var account = AccountFactory.create({
+                        username: accountForm.accountParams.username,
+                        password: accountForm.accountParams.password,
+                        role: role
+                    });
+
+                    return next(null, account);
+                }
+                else {
+                    return next(ErrorCodes.INVALID_FORM);
+                }
             },
 
             function createUser(account, next) {
@@ -49,7 +65,6 @@ var UserRegistrar = {
             },
 
             function saveUser(createdUser, next) {
-
                 self.userSaver.save(createdUser, next);
             }
         ], function (err, isSaved) {

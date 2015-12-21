@@ -19,6 +19,14 @@ var ErrorCodes = {
     INVALID_FORM: ApplicationErrorFactory.create(107, 'Form is not valid'),
     LOGIN_FAILED: ApplicationErrorFactory.create(108, 'Username or password is incorrect'),
     INVALID_USER_FORM: ApplicationErrorFactory.create(109, 'User form is invalid'),
+    USERNAME_NOT_EXIST: ApplicationErrorFactory.create(110, 'UserName does not exist'),
+    PASSWORD_NOT_EXIST: ApplicationErrorFactory.create(111, 'Password does not exist'),
+    ROLE_NOT_EXIST: ApplicationErrorFactory.create(112, 'Role does not exist')
+
+
+
+
+
 };
 
 module.exports = ErrorCodes;
