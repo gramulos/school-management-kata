@@ -11,8 +11,13 @@ var AuthorizerFactory = require('../src/auth/authorizer');
 var StudentRegistrationFormValidatorFactory = require('../src/school/student-registration-form-validator');
 var StudentCreatorFactory = require('../src/school/student-creator');
 var EmailSenderFactory = require('../src/infra/email-sender');
+var UserRegistrarFactory = require('../src/users/user-registrar');
+var AccountLoader = require('../src/users/account-finder');
+var Fixtures  = require('./fixtures');
 
 describe('StudentRegistrar test', function () {
+
+    var UserFormBuilder = Fixtures.user.aUserForm();
 
     describe('#register new student', function() {
 
@@ -24,8 +29,10 @@ describe('StudentRegistrar test', function () {
         var studentRegistrationFormValidatorSpy;
         var studentCreatorSpy;
         var emailSenderSpy;
+        var userRegistrarSpy;
 
         before(function (beforeDone) {
+            studentRegistrationForm = UserFormBuilder.build();
 
             var tokenValidator = TokenValidatorFactory.create();
             tokenValidatorSpy = sinon.spy(tokenValidator, 'validate');
@@ -35,6 +42,13 @@ describe('StudentRegistrar test', function () {
 
             var studentRegistrationFormValidator = StudentRegistrationFormValidatorFactory.create();
             studentRegistrationFormValidatorSpy = sinon.spy(studentRegistrationFormValidator, 'validate');
+
+            AccountLoader.findByUsername = function(err, done){
+                return done(null, true);
+            };
+
+            var userRegistrar = UserRegistrarFactory.create({email:studentRegistrationForm.email});
+            userRegistrarSpy = sinon.spy(userRegistrar, 'register');
 
             var studentCreator = StudentCreatorFactory.create();
             studentCreatorSpy = sinon.spy(studentCreator, 'create');
@@ -46,18 +60,10 @@ describe('StudentRegistrar test', function () {
                 tokenValidator: tokenValidator,
                 authorizer: authorizer,
                 studentRegistrationFormValidator: studentRegistrationFormValidator,
+                userRegistrar:userRegistrar,
                 studentCreator: studentCreator,
                 emailSender: emailSender
             });
-
-            studentRegistrationForm = {
-                firstName: 'rufet',
-                lastName: 'isayev',
-                idNumber: '5ZJBKRJ',
-                email: 'rufetisayev@yahoo.com',
-                phone: '0518585529',
-                imageUrl: 'rufet@images.com'
-            };
 
             var testToken = 'test-token';
 
@@ -78,6 +84,10 @@ describe('StudentRegistrar test', function () {
             assert.isTrue(studentRegistrationFormValidatorSpy.calledOnce);
         });
 
+        it('user should be registered', function () {
+            assert.isTrue(userRegistrarSpy.calledOnce);
+        });
+
         it('should create student', function() {
             assert.isTrue(studentCreatorSpy.calledOnce);
         });
@@ -91,6 +101,7 @@ describe('StudentRegistrar test', function () {
                tokenValidatorSpy,
                authorizerSpy,
                studentRegistrationFormValidatorSpy,
+               userRegistrarSpy,
                studentCreatorSpy,
                emailSenderSpy
            );

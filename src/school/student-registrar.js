@@ -9,8 +9,9 @@ var AuthorizerFactory = require('../auth/authorizer');
 var StudentRegistrationFormValidatorFactory = require('../school/student-registration-form-validator');
 var StudentCreatorFactory = require('../school/student-creator');
 var EmailSenderFactory = require('../infra/email-sender');
-
 var EmailFactory = require('../infra/email-factory');
+var UserRegistrarFactory = require('../users/user-registrar');
+var Role = require('../infra/role');
 
 var StudentRegistrar = {
 
@@ -19,13 +20,13 @@ var StudentRegistrar = {
         this.tokenValidator = args.tokenValidator || TokenValidatorFactory.create();
         this.authorizer = args.authorizer || AuthorizerFactory.create();
         this.studentRegistrationFormValidator = args.studentRegistrationFormValidator || StudentRegistrationFormValidatorFactory.create();
+        this.userRegistrar = args.userRegistrar || UserRegistrarFactory.create(),
         this.studentCreator = args.studentCreator || StudentCreatorFactory.create();
         this.emailSender = args.emailSender || EmailSenderFactory.create();
     },
 
     register: function (token, studentRegistrationForm, done) {
         var self = this;
-
         async.waterfall([
 
             function validateToken(next) {
@@ -46,9 +47,16 @@ var StudentRegistrar = {
                 return next(null, isFormValid);
             },
 
-            function createStudent(isFormValid, next) {
-                if (!isFormValid) {
+            function registerUser(isFormValid,next){
+                if(!isFormValid){
                     return next(ErrorCodes.INVALID_FORM);
+                }
+                self.userRegistrar.register(Role.STUDENT,studentRegistrationForm,next);
+            },
+
+            function createStudent(isSaved, next) {
+                if (!isSaved) {
+                    return next(ErrorCodes.USER_NOT_SAVED);
                 }
 
                 self.studentCreator.create(studentRegistrationForm, next);

@@ -28,6 +28,8 @@
   "dependencies": {
     "async": "^1.5.0",
     "jsonwebtoken": "^5.4.1",
-    "sha256": "^0.2.0"
+    "lodash": "^3.10.1",
+    "sha256": "^0.2.0",
+    "uuid": "^2.0.1"
   }
 }

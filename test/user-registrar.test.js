@@ -6,18 +6,19 @@ var sinon = require('sinon');
 var UserRegistrarFactory = require('../src/users/user-registrar');
 
 var AccountParamsGeneratorFactory = require('../src/users/account-params-generator');
-var UserFactory = require('../src/users/user-creator');
+var UserFactory = require('../src/users/user-factory');
 var UserSaverFactory = require('../src/users/user-saver');
 var UserFormValidatorFactory = require('../src/users/user-form-validator');
 var AccountFactory = require('../src/users/account-factory');
 var AccountFormValidator = require('../src/users/account-form-validator');
 var AccountLoader = require('../src/users/account-finder');
-
+var Fixtures = require('./fixtures');
 var Role = require('../src/infra/role');
 
-describe('testing user registrar', function(){
+describe('testing user registrar', function () {
+    var userFormBuilder = Fixtures.user.aUserForm();
 
-    describe('#generate user account', function(){
+    describe('#generate user account', function () {
         var userRegistrar;
         var input = {};
 
@@ -28,23 +29,16 @@ describe('testing user registrar', function(){
         var userFormValidatorSpy;
         var accountFormValidatorSpy;
 
-        before(function(beforeDone){
+        before(function (beforeDone) {
 
-            AccountLoader.findByUsername = function(err, done) {
+            AccountLoader.findByUsername = function (err, done) {
                 done(null, false);
             };
 
-            input.studentRegistrationForm = {
-                firstName: 'rufet',
-                lastName: 'isayev',
-                idNumber: '5ZJBKRJ',
-                email: 'rufetisayev@yahoo.com',
-                phone: '0518585529',
-                imageUrl: 'rufet@images.com'
-            };
+            input.userRegistrationForm = userFormBuilder.build();
 
             var accountParamsGenerator = AccountParamsGeneratorFactory.create({
-                emailAddress: input.studentRegistrationForm.email
+                email: input.userRegistrationForm.email
             });
 
             var userFormValidator = UserFormValidatorFactory.create();
@@ -72,37 +66,37 @@ describe('testing user registrar', function(){
 
             });
 
-            userRegistrar.register(Role.ADMIN, input.studentRegistrationForm, function(err, isSaved){
+            userRegistrar.register(Role.ADMIN, input.userRegistrationForm, function (err, isSaved) {
                 beforeDone();
             });
 
         });
 
-        it('should validate input form', function(){
+        it('should validate input form', function () {
             assert.isTrue(userFormValidatorSpy.calledOnce);
         });
 
-        it('should generate a user account params', function(){
+        it('should generate a user account params', function () {
             assert.isTrue(accountParamsGeneratorSpy.calledOnce);
         });
 
-        it('should validate account', function(){
+        it('should validate account', function () {
             assert.isTrue(accountFormValidatorSpy.calledOnce);
         });
 
-        it('should create account', function(){
+        it('should create account', function () {
             assert.isTrue(accountFactorySpy.calledOnce);
         });
 
-        it('should create user', function(){
+        it('should create user', function () {
             assert.isTrue(userCreatorSpy.calledOnce);
         });
 
-        it('should save the user', function(){
+        it('should save the user', function () {
             assert.isTrue(userSaverSpy.calledOnce);
         });
 
-        it('should called in correct order', function(){
+        it('should called in correct order', function () {
             sinon.assert.callOrder(
                 userFormValidatorSpy,
                 accountParamsGeneratorSpy,
@@ -113,7 +107,7 @@ describe('testing user registrar', function(){
             )
         });
 
-        after(function(){
+        after(function () {
             accountFactorySpy.restore();
             userCreatorSpy.restore();
         })

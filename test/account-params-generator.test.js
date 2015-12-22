@@ -8,10 +8,14 @@ var AccountParamsGeneratorFactory = require('../src/users/account-params-generat
 var UsernameGenerator = require('../src/users/username-generator');
 var PasswordGenerator = require('../src/users/password-generator');
 var EmailSenderFactory = require('../src/infra/email-sender');
+var Fixtures = require('./fixtures');
 
 
 describe('Generate Account Params test', function () {
+
     describe('#generateAccountParams', function () {
+
+        var UserFormBuilder = Fixtures.user.aUserForm();
 
         var accountParamsGenerator;
 
@@ -26,12 +30,8 @@ describe('Generate Account Params test', function () {
 
         before(function (beforeDone) {
 
-            input.userRegistrationForm = {
-                firstName: 'rufet',
-                lastName: 'isayev',
-                idNumber: '5ZJBKRJ',
-                email: 'rufetisayev@yahoo.com'
-            };
+            input.userRegistrationForm = UserFormBuilder.build();
+
 
             usernameGenerator = UsernameGenerator.create();
             usernameGeneratorSpy = sinon.spy(usernameGenerator, 'generate');
@@ -43,7 +43,7 @@ describe('Generate Account Params test', function () {
             emailSenderSpy = sinon.spy(emailSender, 'send');
 
             accountParamsGenerator = AccountParamsGeneratorFactory.create({
-                emailAddress: input.userRegistrationForm.email,
+                email: input.userRegistrationForm.email,
                 usernameGenerator: usernameGenerator,
                 passwordGenerator: passwordGenerator,
                 emailSender: emailSender
@@ -74,6 +74,7 @@ describe('Generate Account Params test', function () {
         });
 
         it('order should be correct', function () {
+
             sinon.assert.callOrder(
                 usernameGeneratorSpy,
                 passwordGeneratorSpy,

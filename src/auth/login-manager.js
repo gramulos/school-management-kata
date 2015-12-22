@@ -21,7 +21,7 @@ var LoginManager = {
             },
 
             function validatePassword(user, next) {
-                var account = user.getAccount();
+                var account = user;
                 var isPasswordMatch = self.passwordValidator.validate(loginUser.password, account.hashedPassword);
                 return next(null, {isPasswordMatch: isPasswordMatch, account: account});
             },

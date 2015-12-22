@@ -1,26 +1,27 @@
 'use strict';
 
 var async = require('async');
-var UserFactory = require('./user-creator');
-//var AccountParamsGeneratorFactory = require('account-params-generator');
+var UserFactory = require('./user-factory');
+var AccountParamsGeneratorFactory = require('./account-params-generator');
 var UserSaverFactory = require('./user-saver');
 var AccountFactory = require('./account-factory');
+var UserFormValidatorFactory = require('./user-form-validator');
+var AccountFormValidator = require('./account-form-validator');
 
 var ErrorCodes = require('../infra/error-codes');
 
 var UserRegistrar = {
     init: function (args) {
         args = args || {};
-        this.userFormValidator = args.userFormValidator;
-        this.accountGenerator = args.accountParamsGenerator;
-        this.accountFormValidator = args.accountFormValidator;
+        this.userFormValidator = args.userFormValidator || UserFormValidatorFactory.create();
+        this.accountGenerator = args.accountParamsGenerator || AccountParamsGeneratorFactory.create(args);
+        this.accountFormValidator = args.accountFormValidator || AccountFormValidator.create();
         this.userSaver = args.userSaver || UserSaverFactory.create();
     },
 
     register: function (role, userRegistrationForm, done) {
         var self = this;
         async.waterfall([
-
             function validateUserForm(next) {
                 var isFormValid = self.userFormValidator.validate(userRegistrationForm);
                 return next(null, isFormValid)
@@ -37,14 +38,13 @@ var UserRegistrar = {
 
             function validateAccountForm(accountParams, next) {
                 self.accountFormValidator.validate(accountParams,function(err,result){
-                    next(null, {isAccountValid: result, accountParams: accountParams});
+                    return next(null, {isAccountValid: result, accountParams: accountParams});
                 });
 
                 //return next(null, {isAccountValid: isAccountValid, accountParams: accountParams})
             },
 
             function createAccountFromParams(accountForm, next) {
-                console.log(accountForm)
                 if(accountForm) {
                     var account = AccountFactory.create({
                         username: accountForm.accountParams.username,

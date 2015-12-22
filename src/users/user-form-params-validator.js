@@ -1,31 +1,10 @@
 'use strict';
-//var UserFormParamsValidator = require('../users/user-form-params-validator');
-
 const REGEX_DIGIT = /\d/g;
 const REGEX_SYMBOL = /\W+/g;
 const REGEX_EMAIL = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const REGEX_NOT_DIGIT = /\D/g;
 
-var UserFormValidator = {
-
-    init: function (args) {
-        args = args || {};
-    },
-
-    validate: function (userForm) {
-        if (this.validateName(userForm.firstName) &&
-            this.validateName(userForm.lastName) &&
-            this.validateName(userForm.patronymic) &&
-            this.validateIdNumber(userForm.idNumber) &&
-            this.validateEmail(userForm.email) &&
-            this.validatePhoneNumber(userForm.phone)) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    },
-
+var UserFormParamsValidator = {
     validateName: function (name) {
         if (name.length === 0 || name.match(REGEX_DIGIT) || name.match(REGEX_SYMBOL)) {
             return false;
@@ -54,18 +33,6 @@ var UserFormValidator = {
             return true;
         }
     }
-
 };
 
-
-var UserFormValidatorFactory = {
-
-    create: function (args) {
-        var newUserFormValidator = Object.create(UserFormValidator);
-        newUserFormValidator.init(args);
-
-        return newUserFormValidator;
-    }
-};
-
-module.exports = UserFormValidatorFactory;
+module.exports = UserFormParamsValidator;

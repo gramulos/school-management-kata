@@ -9,7 +9,7 @@ var LoginManagerFactory = require('../src/auth/login-manager');
 var UserFinderFactory = require('../src/users/user-finder');
 var PasswordValidatorFactory = require('../src/auth/password-validator');
 var TokenGeneratorFactory = require('../src/auth/token-generator');
-
+var Fixtures = require('./fixtures');
 describe('Login test', function () {
 
     describe('#login user', function () {
@@ -23,20 +23,20 @@ describe('Login test', function () {
 
         var VALID_TOKEN = 'valid-token';
         var actualReturnedToken;
-
+        var accountFormBuilder = Fixtures.account.anAccount();
         before(function (beforeDone) {
             // Given
-            var someUser = {
+            var someUser = accountFormBuilder.withUserId('uuid').withHashedPassword('hashed_password').build();
 
-                getAccount: function() {
-                    return {
-                        userId: 'uuid',
-                        username: 'azersafarov4s',
-                        hashedPassword: 'hashed_password',
-                        role:'ADMIN'
-                    };
-                }
-            };
+            //    //getAccount: function() {
+            //    //    return {
+            //            userId: 'uuid',
+            //            username: 'azersafarov4s',
+            //            hashedPassword: 'hashed_password',
+            //            role:'ADMIN'
+            //    //    };
+            //    //}
+            //};
 
             var userFinder = UserFinderFactory.create();
             userFinderSpy = sinon.stub(userFinder, 'find', function(username, done) {
@@ -62,7 +62,7 @@ describe('Login test', function () {
 
             // When
             inputLoginUser = {
-                username: 'azersafarov4s',
+                username: 'feridheziyev12',
                 password: 'a4s9qc63s'
             };
 

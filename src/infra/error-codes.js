@@ -21,7 +21,8 @@ var ErrorCodes = {
     INVALID_USER_FORM: ApplicationErrorFactory.create(109, 'User form is invalid'),
     USERNAME_NOT_EXIST: ApplicationErrorFactory.create(110, 'UserName does not exist'),
     PASSWORD_NOT_EXIST: ApplicationErrorFactory.create(111, 'Password does not exist'),
-    ROLE_NOT_EXIST: ApplicationErrorFactory.create(112, 'Role does not exist')
+    ROLE_NOT_EXIST: ApplicationErrorFactory.create(112, 'Role does not exist'),
+    USER_NOT_SAVED: ApplicationErrorFactory.create(113, 'User not saved'),
 
 
 
