@@ -2,6 +2,10 @@ var _ = require('lodash');
 
 var INVALID_ID_NUMBER = '4s8a4f9d8e';
 var Role = require('../src/infra/role');
+var AccountFactory = require('../src/users/account-factory');
+var sha256 = require('sha256');
+
+
 var ValidUserFormBuilder = {
     init: function () {
         this.user = {
@@ -20,22 +24,22 @@ var ValidUserFormBuilder = {
         return this;
     },
 
-    withInvalidIdNumber: function() {
+    withInvalidIdNumber: function () {
         this.user.idNumber = INVALID_ID_NUMBER;
         return this;
     },
 
-    withPhoneNumber: function(phoneNumber) {
+    withPhoneNumber: function (phoneNumber) {
         this.user.phoneNumber = phoneNumber;
         return this;
     },
 
-    withPatronymic: function(patronymic) {
+    withPatronymic: function (patronymic) {
         this.user.patronymic = patronymic;
         return this;
     },
 
-    withEmail: function(email) {
+    withEmail: function (email) {
         this.user.email = email;
         return this;
     },
@@ -45,66 +49,83 @@ var ValidUserFormBuilder = {
     }
 };
 
-var StudentFormBuilder = {
+var StudentBuilderTest = {
     init: function () {
-        var userForm = ValidUserFormBuilder.aUserForm().build();
 
-        this.form = {
-            userForm: this.userForm,
+        this.builder = {
             grade: 10,
             classNumber: 100,
             studentId: '11102'
-        }
+        };
     },
 
     withGrade: function (grade) {
-        this.studentForm.grade = grade;
+        this.builder.grade = grade;
         return this;
     },
 
 
     build: function () {
-        return _.assign({}, this.studentForm);
+
+    },
+
+    buildForm: function () {
+        var userBuilder = Object.create(ValidUserFormBuilder);
+        userBuilder.init();
+
+        var userForm = userBuilder.buildForm();
+        return _.assign({}, userForm, {
+            studentForm: {
+                grade: this.builder.grade,
+            }
+        })
     }
 };
 
-var AccountFormBuilder = {
-    init: function(){
-        this.account = {
-            username: 'feridheziyev12',
-            role: Role.STUDENT,
-
-        }
+var AccountBuilderTest = {
+    init: function () {
+        this.builder = {};
+        this.builder = {
+            form: {
+                username: 'username1',
+                password: 'a4s9qc63s'
+            }
+        };
+        this.builder.hashedPassword = sha256(this.builder.form.password);
+        this.builder.role = Role.STUDENT;
+        this.builder.userId = '111'; // TODO make it more realistic
     },
 
-    withUsername: function(username){
-        this.account.username = username;
+    withUsername: function (username) {
+        this.builder.form.username = username;
         return this;
     },
-    withRole: function(role){
-        this.account.role = role;
-        return this;
-    },
-    withPassword: function(password){
-        this.account.password = password;
-        return this;
-    },
-    withHashedPassword: function(hashedPassword) {
-        this.account.hashedPassword = hashedPassword;
+    withRole: function (role) {
+        this.builder.role = role;
         return this;
     },
 
-    withUserId: function(userId) {
-        this.account.userId = userId;
+    withPassword: function (password) {
+        this.builder.form.password = password;
+        this.builder.hashedPassword = sha256(this.builder.form.password);
         return this;
     },
 
-    build: function(){
-        return _.assign({},this.account)
+    build: function () {
+        return AccountFactory.createFromForm(this.builder);
+    },
+
+    buildForm: function () {
+        var form = {
+            form: this.builder.form,
+
+            role: this.builder.role
+        };
+
+        return form;
     }
 
 };
-
 
 var Fixtures = {
     user: {
@@ -118,12 +139,14 @@ var Fixtures = {
     account: {
 
         anAccount: function () {
-            var accountForm = Object.create(AccountFormBuilder);
-            accountForm.init();
-            return accountForm;
+            var accountBuilder = Object.create(AccountBuilderTest);
+            accountBuilder.init();
+            return accountBuilder;
         }
 
+
     }
+
 };
 
 module.exports = Fixtures;

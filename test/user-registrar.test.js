@@ -11,9 +11,10 @@ var UserSaverFactory = require('../src/users/user-saver');
 var UserFormValidatorFactory = require('../src/users/user-form-validator');
 var AccountFactory = require('../src/users/account-factory');
 var AccountFormValidator = require('../src/users/account-form-validator');
-var AccountLoader = require('../src/users/account-finder');
+var AccountLoaderFactory = require('../src/users/account-loader-factory');
 var Fixtures = require('./fixtures');
 var Role = require('../src/infra/role');
+var UsernamePolicyValidatorFactory = require('../src/users/username-policy-validator');
 
 describe('testing user registrar', function () {
     var userFormBuilder = Fixtures.user.aUserForm();
@@ -28,12 +29,18 @@ describe('testing user registrar', function () {
         var accountFactorySpy;
         var userFormValidatorSpy;
         var accountFormValidatorSpy;
-
+        var accountLoader;
         before(function (beforeDone) {
 
-            AccountLoader.findByUsername = function (err, done) {
-                done(null, false);
+            accountLoader = AccountLoaderFactory.create();
+            accountLoader.findByUsername = function (err, done) {
+                // account not found
+                return done(null, null);
             };
+            var usernamePolicyValidator = UsernamePolicyValidatorFactory.create({accountLoader: accountLoader});
+            //AccountLoader.findByUsername = function (err, done) {
+            //    done(null, false);
+            //};
 
             input.userRegistrationForm = userFormBuilder.build();
 
@@ -46,12 +53,12 @@ describe('testing user registrar', function () {
 
             accountParamsGeneratorSpy = sinon.spy(accountParamsGenerator, 'generate');
 
-            var accountFormValidator = AccountFormValidator.create();
+            var accountFormValidator = AccountFormValidator.create({usernamePolicyValidator: usernamePolicyValidator});
             accountFormValidatorSpy = sinon.spy(accountFormValidator, 'validate');
 
-            accountFactorySpy = sinon.spy(AccountFactory, 'create');
+            accountFactorySpy = sinon.spy(AccountFactory, 'createFromForm');
 
-            userCreatorSpy = sinon.spy(UserFactory, 'create');
+            userCreatorSpy = sinon.spy(UserFactory, 'createFromForm');
 
             var userSaver = UserSaverFactory.create();
             userSaverSpy = sinon.spy(userSaver, 'save');

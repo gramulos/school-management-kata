@@ -29,7 +29,6 @@ var UserRegistrar = {
 
             function generateAccount(isFormValid, next) {
                 if (!isFormValid) {
-                    console.warn('User form is invalid');
                     return next(ErrorCodes.INVALID_USER_FORM);
                 }
 
@@ -46,9 +45,12 @@ var UserRegistrar = {
 
             function createAccountFromParams(accountForm, next) {
                 if(accountForm) {
-                    var account = AccountFactory.create({
-                        username: accountForm.accountParams.username,
-                        password: accountForm.accountParams.password,
+                    var form  = accountForm.accountParams.form;
+                    var account = AccountFactory.createFromForm({
+                        form: {
+                            username: form.username,
+                            password: form.password
+                        },
                         role: role
                     });
 
@@ -60,7 +62,9 @@ var UserRegistrar = {
             },
 
             function createUser(account, next) {
-                var createdUser = UserFactory.create({userRegistrationForm: userRegistrationForm, account: account});
+                userRegistrationForm.account = account;
+
+                var createdUser = UserFactory.createFromForm(userRegistrationForm);
                 return next(null, createdUser);
             },
 

@@ -20,7 +20,7 @@ var StudentRegistrar = {
         this.tokenValidator = args.tokenValidator || TokenValidatorFactory.create();
         this.authorizer = args.authorizer || AuthorizerFactory.create();
         this.studentRegistrationFormValidator = args.studentRegistrationFormValidator || StudentRegistrationFormValidatorFactory.create();
-        this.userRegistrar = args.userRegistrar || UserRegistrarFactory.create(),
+        this.userRegistrar = args.userRegistrar || UserRegistrarFactory.create();
         this.studentCreator = args.studentCreator || StudentCreatorFactory.create();
         this.emailSender = args.emailSender || EmailSenderFactory.create();
     },

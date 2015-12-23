@@ -58,14 +58,14 @@ describe('Generate Account Params test', function () {
 
         it('username should be the name, surname and the first 2 chars of pin code', function () {
 
-            assert.equal(actual.accountParams.username, 'rufetisayev5Z');
+            assert.equal(actual.accountParams.form.username, 'rufetisayev5Z');
             assert.isTrue(usernameGeneratorSpy.calledOnce);
 
         });
 
         it('password should be the first letter of name, pin code and the first letter of surname', function () {
 
-            assert.equal(actual.accountParams.password, 'r5ZJBKRJi');
+            assert.equal(actual.accountParams.form.password, 'r5ZJBKRJi');
             assert.isTrue(passwordGeneratorSpy.calledOnce)
         });
 

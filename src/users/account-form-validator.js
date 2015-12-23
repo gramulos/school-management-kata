@@ -2,22 +2,25 @@
 
 var async = require('async');
 var assert = require('assert');
-var UsernamePolicyValidator = require('./username-policy-validator');
-var PasswordPolicyValidator = require('./password-policy-validator');
+var UsernamePolicyValidatorFactory = require('./username-policy-validator');
+var PasswordPolicyValidator= require('./password-policy-validator');
 
 var AccountFormValidator = {
 
     init: function (args) {
-
+        args = args || {};
+        this.usernamePolicyValidator = args.usernamePolicyValidator || UsernamePolicyValidatorFactory.create();
     },
     validate: function (args, done) {
-        assert.ok(args.username && args.password, 'Username or password is incorrect');
-        var username = args.username;
-        var password = args.password;
+        assert.ok(args.form.username && args.form.password, 'Username or password is incorrect');
+        var username = args.form.username;
+        var password = args.form.password;
+        var self= this;
 
         async.parallel({
+
             isValidUsername: function (next) {
-                UsernamePolicyValidator.validate(username, next);
+                self.usernamePolicyValidator.validate(username, next);
             },
             isValidPassword: function (next) {
                 var passwordValidationResult = PasswordPolicyValidator.validate(password);
@@ -41,9 +44,9 @@ var AccountFormValidator = {
 
 var AccountFormValidatorFactory = {
 
-    create: function () {
+    create: function (args) {
         var newAccountFormValidator = Object.create(AccountFormValidator);
-        newAccountFormValidator.init();
+        newAccountFormValidator.init(args);
 
         return newAccountFormValidator;
     }

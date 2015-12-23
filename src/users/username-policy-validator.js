@@ -1,11 +1,15 @@
 'use strict';
-
-var AccountLoader = require('./account-finder');
+var AccountLoaderFactory = require('../users/account-loader-factory');
 
 var UsernamePolicyValidator = {
+
+    init: function(args) {
+        args = args || {};
+        this.accountLoader = args.accountLoader || AccountLoaderFactory.create();
+    },
     validate: function(username, done) {
 
-        AccountLoader.findByUsername(username, function(err, account) {
+        this.accountLoader.findByUsername(username, function(err, account) {
             if(account) {
                 return done(null, false);
             }
@@ -16,4 +20,15 @@ var UsernamePolicyValidator = {
     }
 };
 
-module.exports = UsernamePolicyValidator;
+
+var UsernamePolicyValidatorFactory = {
+
+    create: function (args) {
+        var newUsernamePolicyValidator = Object.create(UsernamePolicyValidator);
+        newUsernamePolicyValidator.init(args);
+
+        return newUsernamePolicyValidator;
+    }
+};
+
+module.exports = UsernamePolicyValidatorFactory;

@@ -12,14 +12,17 @@ var StudentRegistrationFormValidatorFactory = require('../src/school/student-reg
 var StudentCreatorFactory = require('../src/school/student-creator');
 var EmailSenderFactory = require('../src/infra/email-sender');
 var UserRegistrarFactory = require('../src/users/user-registrar');
-var AccountLoader = require('../src/users/account-finder');
-var Fixtures  = require('./fixtures');
+var AccountLoaderFactory = require('../src/users/account-loader-factory');
+var Fixtures = require('./fixtures');
+var UsernamePolicyValidatorFactory = require('../src/users/username-policy-validator');
+var AccountFormValidatorFactory = require('../src/users/account-form-validator');
 
 describe('StudentRegistrar test', function () {
 
     var UserFormBuilder = Fixtures.user.aUserForm();
+    var AccountBuilderTest = Fixtures.account;
 
-    describe('#register new student', function() {
+    describe('#register new student', function () {
 
         var studentRegistrar;
         var studentRegistrationForm;
@@ -43,11 +46,18 @@ describe('StudentRegistrar test', function () {
             var studentRegistrationFormValidator = StudentRegistrationFormValidatorFactory.create();
             studentRegistrationFormValidatorSpy = sinon.spy(studentRegistrationFormValidator, 'validate');
 
-            AccountLoader.findByUsername = function(err, done){
-                return done(null, true);
+            var builder = AccountBuilderTest.anAccount();
+            var accountLoader = AccountLoaderFactory.create();
+            accountLoader.findByUsername = function (err, done) {
+                var existingAccount = builder.build();
+                return done(null, existingAccount);
             };
+            var usernamePolicyValidator = UsernamePolicyValidatorFactory.create({accountLoader: accountLoader});
 
-            var userRegistrar = UserRegistrarFactory.create({email:studentRegistrationForm.email});
+            var accountFormValidator = AccountFormValidatorFactory.create({
+                usernamePolicyValidator: usernamePolicyValidator
+            });
+            var userRegistrar = UserRegistrarFactory.create({email: studentRegistrationForm.email, accountFormValidator: accountFormValidator});
             userRegistrarSpy = sinon.spy(userRegistrar, 'register');
 
             var studentCreator = StudentCreatorFactory.create();
@@ -60,19 +70,19 @@ describe('StudentRegistrar test', function () {
                 tokenValidator: tokenValidator,
                 authorizer: authorizer,
                 studentRegistrationFormValidator: studentRegistrationFormValidator,
-                userRegistrar:userRegistrar,
+                userRegistrar: userRegistrar,
                 studentCreator: studentCreator,
                 emailSender: emailSender
             });
 
             var testToken = 'test-token';
 
-            studentRegistrar.register(testToken, studentRegistrationForm, function(err, result) {
+            studentRegistrar.register(testToken, studentRegistrationForm, function (err, result) {
                 beforeDone();
             });
         });
 
-        it('user should have valid access token', function() {
+        it('user should have valid access token', function () {
             assert.isTrue(tokenValidatorSpy.calledOnce);
         });
 
@@ -88,23 +98,23 @@ describe('StudentRegistrar test', function () {
             assert.isTrue(userRegistrarSpy.calledOnce);
         });
 
-        it('should create student', function() {
+        it('should create student', function () {
             assert.isTrue(studentCreatorSpy.calledOnce);
         });
 
-        it('should send email to new registered student', function() {
+        it('should send email to new registered student', function () {
             assert.isTrue(emailSenderSpy.calledOnce);
         });
 
         it('should called in correct order', function () {
-           sinon.assert.callOrder(
-               tokenValidatorSpy,
-               authorizerSpy,
-               studentRegistrationFormValidatorSpy,
-               userRegistrarSpy,
-               studentCreatorSpy,
-               emailSenderSpy
-           );
+            sinon.assert.callOrder(
+                tokenValidatorSpy,
+                authorizerSpy,
+                studentRegistrationFormValidatorSpy,
+                userRegistrarSpy,
+                studentCreatorSpy,
+                emailSenderSpy
+            );
         });
 
     });

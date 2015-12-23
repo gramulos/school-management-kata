@@ -34,7 +34,7 @@ var AccountGenerator = {
                 console.error(err);
                 return done(err);
             }
-            return done(null, { username: username, password: password });
+            return done(null, { form:{username: username, password: password} });
         });
     }
 

@@ -5,29 +5,35 @@ chai.use(require('chai-shallow-deep-equal'));
 var assert = chai.assert;
 var Fixtures = require('../fixtures');
 var AccountFormValidator = require('../../src/users/account-form-validator');
-var AccountFinder = require('../../src/users/account-finder');
+var AccountLoaderFactory = require('../../src/users/account-loader-factory');
+var UsernamePolicyValidatorFactory = require('../../src/users/username-policy-validator');
 
 describe('AccountFormValidator test', function () {
-    var accountFormBuilder =  Fixtures.account.anAccount();
-    describe('#validate username and password policy', function () {
+    var AccountTestBuilder = Fixtures.account;
+
+    describe('#validate username and password matching the policies (valid / happy path)', function () {
         var accountFormValidator;
         var input = {};
 
         before(function () {
-            AccountFinder.findByUsername = function(err, done){
+            var accountLoader = AccountLoaderFactory.create();
+            accountLoader.findByUsername = function (err, done) {
                 // account not found
                 return done(null, null);
             };
 
-            input.account = accountFormBuilder
-                                             .withPassword('a4s9qc63s')
-                                             .build();
+            input.account = AccountTestBuilder.anAccount()
+                .buildForm();
 
-            accountFormValidator = AccountFormValidator.create();
+            var usernamePolicyValidator = UsernamePolicyValidatorFactory.create({accountLoader: accountLoader});
+
+            accountFormValidator = AccountFormValidator.create({
+                usernamePolicyValidator: usernamePolicyValidator
+            });
         });
 
-        it('should return true for valid username and password input', function (testDone) {
-            accountFormValidator.validate(input.account, function(err, isValidForm) {
+        it('should return true', function (testDone) {
+            accountFormValidator.validate(input.account, function (err, isValidForm) {
                 assert.isTrue(isValidForm);
                 testDone();
             });
@@ -35,28 +41,31 @@ describe('AccountFormValidator test', function () {
     });
 
 
-    describe('#validate username is not match the policy', function () {
+    describe('#validate username is not match the policy (if account exist)', function () {
 
-        var accountFormValidator;
-        var account;
+        var accountForm,accountFormValidator;
 
         before(function () {
-            AccountFinder.findByUsername = function(err, done){
-                var existingAccount = accountFormBuilder
-                                                        .withHashedPassword('23123123123123')
-                                                        .build();
+            var builder = AccountTestBuilder.anAccount();
+            accountForm = builder.buildForm();
+
+            var accountLoader = AccountLoaderFactory.create();
+            accountLoader.findByUsername = function (err, done) {
+                var existingAccount = builder.build();
 
                 return done(null, existingAccount);
             };
-            var accountFormBuilder =  Fixtures.account.anAccount();
 
-            account = accountFormBuilder.withPassword('a4s9qc63s').build();
+            var usernamePolicyValidator = UsernamePolicyValidatorFactory.create({accountLoader: accountLoader});
 
-            accountFormValidator = AccountFormValidator.create();
+            accountFormValidator = AccountFormValidator.create({
+                usernamePolicyValidator: usernamePolicyValidator
+            });
         });
 
-        it('should return true for valid username and password input', function (testDone) {
-            accountFormValidator.validate(account, function(err, isValidForm) {
+        it('should return false', function (testDone) {
+
+            accountFormValidator.validate(accountForm, function (err, isValidForm) {
                 assert.isFalse(isValidForm);
                 testDone();
             });
@@ -64,25 +73,31 @@ describe('AccountFormValidator test', function () {
     });
 
     describe('#validate password is not match the policy', function () {
-
         var accountFormValidator;
-        var account;
+        var accountForm;
 
         before(function () {
-            AccountFinder.findByUsername = function(err, done){
+            accountForm = AccountTestBuilder.anAccount()
+                .withPassword('aaaaaa')
+                .buildForm();
+
+            var accountLoader = AccountLoaderFactory.create();
+            accountLoader.findByUsername = function (err, done) {
                 return done(null, null);
             };
-            var accountFormBuilder =  Fixtures.account.anAccount();
 
-            account = accountFormBuilder
-                                        .withPassword('aaaaaa')
-                                        .build();
+            var usernamePolicyValidator = UsernamePolicyValidatorFactory.create({accountLoader: accountLoader});
 
-            accountFormValidator = AccountFormValidator.create();
+            accountFormValidator = AccountFormValidator.create({
+                usernamePolicyValidator: usernamePolicyValidator
+            });
+
         });
 
-        it('should return true for valid username and password input', function (testDone) {
-            accountFormValidator.validate(account, function(err, isValidForm) {
+
+        it('should return false', function (testDone) {
+
+            accountFormValidator.validate(accountForm, function (err, isValidForm) {
                 assert.isFalse(isValidForm);
                 testDone();
             });

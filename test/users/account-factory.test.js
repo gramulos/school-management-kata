@@ -8,72 +8,71 @@ var HashProvider = require('../../src/infra/hash-provider');
 var ErrorCodes = require('../../src/infra/error-codes');
 var Fixtures = require('../fixtures');
 describe('Create account test', function () {
-    var accountFormBuilder = Fixtures.account.anAccount();
+    var AccountTestBuilder = Fixtures.account;
+
+
     describe('#createAccount', function () {
         describe('with valid inputs', function () {
-            var account,accountData;
+            var actualAccount, accountData;
+            var accountBuilder;
 
             before(function () {
+                accountBuilder = AccountTestBuilder.anAccount();
 
-                accountData = accountFormBuilder.withPassword('f12123h').build();
-                account = AccountFactory.create(accountData);
+                accountData = {
+                    form:{
+                        username: 'username1',
+                        password: 'a4s9qc63s'
+                    },
+                    role: Role.STUDENT
+                };
+
+                actualAccount = AccountFactory.createFromForm(accountData);
+
             });
 
             it('should create account (username, hashPassword, role) from input', function () {
-                var accountFormBuilder = Fixtures.account.anAccount();
 
-                var expected = accountFormBuilder
-                                            .withHashedPassword('81ba016cb1e7887e6a0b9f07a6ae846d4dbb150843863aee02b03ca5ad9b4d65')
-                                            .build();
-                assert.shallowDeepEqual(account, expected);
+                var expectedAccount = accountBuilder.build();
+
+                assert.deepEqual(actualAccount, expectedAccount);
             });
 
         });
 
-        describe('username is not entered', function () {
-            var accountData;
+        describe('username is not passed', function () {
+            var accountForm;
 
             before(function () {
 
-                accountData = accountFormBuilder
-                                        .withPassword('f12123h')
-                                        .withUsername('')
-                                        .build();
-
-
+                accountForm = AccountTestBuilder.anAccount()
+                                                .withUsername('')
+                                                .buildForm();
             });
 
             it('should return username does not exist error', function () {
 
-                try {
-                    AccountFactory.create(accountData);
+                assert.throws(function() {
+                    AccountFactory.create(accountForm);
 
-                    assert.fail();
-
-                }
-                catch (err) {
-
-                    assert.equal(err.message, ErrorCodes.USERNAME_NOT_EXIST);
-                }
+                }, ErrorCodes.USERNAME_NOT_EXIST);
             });
         });
 
-        describe('password is not entered', function () {
-            var accountData;
-            var accountDataBuilder = Fixtures.account.anAccount();
+        describe('password is not passed', function () {
+            var accountData;git 
 
             before(function () {
 
-                accountData = accountDataBuilder
-                                        .withPassword('')
-                                        .build();
-
+                accountData = AccountTestBuilder.anAccount()
+                                                .withPassword('')
+                                                .buildForm();
             });
 
             it('should return password does not exist error', function () {
 
                 try {
-                    AccountFactory.create(accountData);
+                    AccountFactory.createFromForm(accountData);
                     assert.fail();
 
                 }
@@ -83,21 +82,19 @@ describe('Create account test', function () {
             });
         });
 
-        describe('role is not entered', function () {
+        describe('role is not passed', function () {
             var accountData;
-            var accountDataBuilder = Fixtures.account.anAccount();
 
-           before(function () {
-                accountData = accountDataBuilder
-                        .withPassword('f12123h')
-                        .withRole('')
-                        .build();
+            before(function () {
+                accountData = AccountTestBuilder.anAccount()
+                                                .withRole('')
+                                                .buildForm();
             });
 
             it('should return role does not exist error', function () {
 
                 try {
-                    AccountFactory.create(accountData);
+                    AccountFactory.createFromForm(accountData);
                     assert.fail();
 
                 }
