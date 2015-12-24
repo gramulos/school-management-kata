@@ -5,9 +5,12 @@ var Authorizer = {
 
     },
 
-    authorize: function (role, account, done) {
-
-        done(null, true);
+    authorize: function (role, account) {
+        if(role === account.role){
+            return true;
+        } else {
+            return false;
+        }
     }
 };
 

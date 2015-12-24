@@ -5,6 +5,7 @@ var UserFinder = {
 
     },
     find: function (userName,done) {
+
     }
 };
 

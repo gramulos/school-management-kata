@@ -27,7 +27,7 @@ var UserFormValidator = {
     },
 
     validateName: function (name) {
-        if (name.length === 0 || name.match(REGEX_DIGIT) || name.match(REGEX_SYMBOL)) {
+        if (String(name).length === 0 || String(name).match(REGEX_DIGIT) || String(name).match(REGEX_SYMBOL)) {
             return false;
         } else {
             return true;

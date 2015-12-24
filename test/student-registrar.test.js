@@ -19,8 +19,9 @@ var AccountFormValidatorFactory = require('../src/users/account-form-validator')
 
 describe('StudentRegistrar test', function () {
 
-    var UserFormBuilder = Fixtures.user.aUserForm();
+    var UserFormBuilder = Fixtures.user;
     var AccountBuilderTest = Fixtures.account;
+    var studentBuilder = Fixtures.student;
 
     describe('#register new student', function () {
 
@@ -33,9 +34,14 @@ describe('StudentRegistrar test', function () {
         var studentCreatorSpy;
         var emailSenderSpy;
         var userRegistrarSpy;
+        var studentForm;
+        var userForm;
 
         before(function (beforeDone) {
-            studentRegistrationForm = UserFormBuilder.build();
+            studentForm = StudentRegistrationFormValidatorFactory.create();
+            studentRegistrationForm = studentBuilder.aStudentForm().buildForm();
+            userForm = UserFormBuilder.aUserForm().build();
+            //studentRegistrationForm = UserFormBuilder.build();
 
             var tokenValidator = TokenValidatorFactory.create();
             tokenValidatorSpy = sinon.spy(tokenValidator, 'validate');
@@ -47,21 +53,26 @@ describe('StudentRegistrar test', function () {
             studentRegistrationFormValidatorSpy = sinon.spy(studentRegistrationFormValidator, 'validate');
 
             var builder = AccountBuilderTest.anAccount();
+
             var accountLoader = AccountLoaderFactory.create();
+
             accountLoader.findByUsername = function (err, done) {
+
                 var existingAccount = builder.build();
                 return done(null, existingAccount);
             };
             var usernamePolicyValidator = UsernamePolicyValidatorFactory.create({accountLoader: accountLoader});
 
             var accountFormValidator = AccountFormValidatorFactory.create({
+
                 usernamePolicyValidator: usernamePolicyValidator
             });
-            var userRegistrar = UserRegistrarFactory.create({email: studentRegistrationForm.email, accountFormValidator: accountFormValidator});
+            //console.log('test',studentRegistrationForm)
+            var userRegistrar = UserRegistrarFactory.create({email: userForm.email, accountFormValidator: accountFormValidator});
             userRegistrarSpy = sinon.spy(userRegistrar, 'register');
 
-            var studentCreator = StudentCreatorFactory.create();
-            studentCreatorSpy = sinon.spy(studentCreator, 'create');
+            //var studentCreator = StudentCreatorFactory.create();
+            studentCreatorSpy = sinon.spy(StudentCreatorFactory, 'create');
 
             var emailSender = EmailSenderFactory.create();
             emailSenderSpy = sinon.spy(emailSender, 'send');
@@ -71,14 +82,14 @@ describe('StudentRegistrar test', function () {
                 authorizer: authorizer,
                 studentRegistrationFormValidator: studentRegistrationFormValidator,
                 userRegistrar: userRegistrar,
-                studentCreator: studentCreator,
                 emailSender: emailSender
             });
 
-            var testToken = 'test-token';
+            var testToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJkODU1YTM2MC1hYTFlLTExZTUtYWQxZC1kNzY3ZjVhOWQzMTMiLCJyb2xlIjoxLCJpYXQiOjE0NTA5NDg1MTUsImV4cCI6MTQ1MTAzNDkxNX0.815QW9QVQ9TNQQaT8347Am6YlQMh9o5t2QfidCJtjI4';
 
-            studentRegistrar.register(testToken, studentRegistrationForm, function (err, result) {
-                beforeDone();
+            studentRegistrar.register(testToken, studentRegistrationForm,userForm, function (err, result) {
+
+                    beforeDone();
             });
         });
 
@@ -86,7 +97,7 @@ describe('StudentRegistrar test', function () {
             assert.isTrue(tokenValidatorSpy.calledOnce);
         });
 
-        it('user has to be authorized', function () {
+        it('user has to be authorized as ADMIN', function () {
             assert.isTrue(authorizerSpy.calledOnce);
         });
 
@@ -116,6 +127,10 @@ describe('StudentRegistrar test', function () {
                 emailSenderSpy
             );
         });
+
+        after(function () {
+            studentCreatorSpy.restore();
+        })
 
     });
 });

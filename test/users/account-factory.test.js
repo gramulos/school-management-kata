@@ -20,10 +20,8 @@ describe('Create account test', function () {
                 accountBuilder = AccountTestBuilder.anAccount();
 
                 accountData = {
-                    form:{
-                        username: 'username1',
-                        password: 'a4s9qc63s'
-                    },
+                    username: 'username1',
+                    password: 'a4s9qc63s',
                     role: Role.STUDENT
                 };
 
@@ -60,7 +58,7 @@ describe('Create account test', function () {
         });
 
         describe('password is not passed', function () {
-            var accountData;git 
+            var accountData;
 
             before(function () {
 

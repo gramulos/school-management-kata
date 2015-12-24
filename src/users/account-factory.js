@@ -20,15 +20,15 @@ var Account = {
 var AccountFactory = {
 
     createFromForm: function (args) {
-        args.username = args.form.username;
-        assert.ok(args.form.password, ErrorCodes.PASSWORD_NOT_EXIST);
-
-        args.hashedPassword = HashProvider.hash(args.form.password);
+        args = args.form || args;
+        assert.ok(args.password, ErrorCodes.PASSWORD_NOT_EXIST);
+        args.hashedPassword = HashProvider.hash(args.password);
 
         var newAccount = Object.create(Account);
         newAccount.init(args);
         return newAccount;
     }
+
 };
 
 module.exports = AccountFactory;

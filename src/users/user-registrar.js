@@ -47,10 +47,8 @@ var UserRegistrar = {
                 if(accountForm) {
                     var form  = accountForm.accountParams.form;
                     var account = AccountFactory.createFromForm({
-                        form: {
-                            username: form.username,
-                            password: form.password
-                        },
+                        username: form.username,
+                        password: form.password,
                         role: role
                     });
 
@@ -62,9 +60,8 @@ var UserRegistrar = {
             },
 
             function createUser(account, next) {
-                userRegistrationForm.account = account;
 
-                var createdUser = UserFactory.createFromForm(userRegistrationForm);
+                var createdUser = UserFactory.createFromForm({ form: userRegistrationForm, account: account });
                 return next(null, createdUser);
             },
 

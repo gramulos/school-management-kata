@@ -4,21 +4,23 @@ var assert = require('assert');
 var uuid = require('uuid');
 var _ = require('lodash');
 
-
+var UuidProviderFactory = require('../infra/uuid-provider');
+var DateProviderFactory = require('../infra/date-provider');
 
 var User = {
     init: function (args) {
         //this.user = {};
-        assert.ok(
-            args.id
-            && args.firstName && args.lastName && args.patronymic && args.idNumber
-            && args.email && args.phone
-            && args.imageUrl
-            && args.createdDate
-            && args.account,
+        assert.ok(args.id , 'invalid id');
+        assert.ok(args.firstName, 'invalid firstname');
+        assert.ok(args.lastName, 'invalid lastname');
+        assert.ok(args.patronymic, 'invalid patronymic');
+        assert.ok(args.idNumber, 'invalid idNumber');
+        assert.ok(args.email, 'invalid email');
+        assert.ok(args.phone,'invalid phone');
+        assert.ok(args.imageUrl, 'invalid imageUrl');
+        assert.ok(args.createdDate, 'invalid createdDate');
+        assert.ok(args.account, 'invalid account');
 
-            'invalid input'
-        );
 
         this.id = args.id;
         this.firstName = args.firstName;
@@ -36,15 +38,26 @@ var User = {
 var UserFactory = {
 
     createFromForm: function (args) {
-        args.id = uuid.v1();
-        args.createdDate = new Date();
+        assert.ok(args.form, 'form is required');
+        assert.ok(args.account, 'account is required');
+        var uuidProvider = args.uuidProvider || UuidProviderFactory.create();
+        var dateProvider = args.dateProvider || DateProviderFactory.create();
+
+        var userData = _.assign({
+
+            id: uuidProvider.v1(),
+            account: args.account,
+            createdDate: dateProvider.now()
+
+        }, args.form);
 
         var user = Object.create(User);
-        user.init(args);
+        user.init(userData);
+
         return user;
     },
 
-    createMomo: function(args) {
+    create: function(args) {
         var user = Object.create(User);
         user.init(args);
         return user;

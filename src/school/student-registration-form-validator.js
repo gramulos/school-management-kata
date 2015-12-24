@@ -1,12 +1,32 @@
 'use strict';
 
+var assert = require('assert');
+
 var StudentRegistrationFormValidator = {
     init: function(args) {
 
     },
 
     validate: function (form) {
-        return true;
+        return this.validateGrade(form.grade) && this.validateClassNumber(form.classNumber) ? true : false;
+    },
+
+    validateGrade: function(grade) {
+        if (grade > 0 && String(grade).match(/\d/g)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    },
+
+    validateClassNumber: function(classNumber) {
+        if (String(classNumber).length > 1 && !String(classNumber).match(/\W+/g)) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 };
 

@@ -2,20 +2,11 @@
 
 var StudentCreator = {
     init: function(args) {
+        this.grade = args.grade;
+        this.classNumber = args.classNumber;
+        this.user = args.user;
 
-    },
-
-    create: function (token, done) {
-        var testStudent = {
-            user: {
-
-                account: {
-
-                }
-            }
-        };
-
-        done(null, testStudent);
+        return this;
     }
 };
 

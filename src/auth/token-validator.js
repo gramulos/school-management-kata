@@ -1,17 +1,24 @@
 'use strict';
-
+var jwt = require('jsonwebtoken');
+var Config = require('../infra/config');
 var TokenValidator = {
     init: function(args) {
-
     },
 
     validate: function (token, done) {
-        var testAccount = {
-            username: 'anar',
-            role: 'ADMIN'
-        };
+        if(token){
+            jwt.verify(token, Config.secretKey, function(err,decoded){
+                if(err){
+                    return done(err);
+                }
+                else{
+                    //decoded.role = 1;
+                    return done(null,decoded);
+                }
+            })
+        }
 
-        done(null, testAccount);
+
     }
 };
 

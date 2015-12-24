@@ -3,10 +3,57 @@ var _ = require('lodash');
 var INVALID_ID_NUMBER = '4s8a4f9d8e';
 var Role = require('../src/infra/role');
 var AccountFactory = require('../src/users/account-factory');
+var UserFactory = require('../src/users/user-factory');
 var sha256 = require('sha256');
+var StudentFactory = require('../src/school/student-creator');
+
+var AccountBuilderTest = {
+    init: function () {
+        this.builder = {};
+        this.builder.username = 'username1';
+        this.builder.password = 'a4s9qc63s';
+        this.builder.hashedPassword = sha256(this.builder.password);
+        this.builder.role = Role.STUDENT;
+        this.builder.userId = '111'; // TODO make it more realistic
+    },
+
+    withUsername: function (username) {
+        this.builder.username = username;
+        return this;
+    },
+
+    withRole: function (role) {
+        this.builder.role = role;
+        return this;
+    },
+
+    withPassword: function (password) {
+        this.builder.password = password;
+        this.builder.hashedPassword = sha256(this.builder.password);
+        return this;
+    },
+
+    build: function () {
+        return AccountFactory.createFromForm(this.builder);
+    },
+
+    buildForm: function () {
+        var form = {
+            form: {
+                username: this.builder.username,
+                password: this.builder.password
+            },
+
+            role: this.builder.role
+        };
+
+        return form;
+    }
+
+};
 
 
-var ValidUserFormBuilder = {
+var UserBuilder = {
     init: function () {
         this.user = {
             firstName: 'rufet',
@@ -44,19 +91,29 @@ var ValidUserFormBuilder = {
         return this;
     },
 
-    build: function () {
-        return _.assign({}, this.user);
+    build: function (account) {
+        if (!account) {
+            var accountBuilder = Object.create(AccountBuilderTest);
+            accountBuilder.init();
+
+            account = accountBuilder.build();
+        }
+
+        return UserFactory.createFromForm({ form: this.user, account: account })
+    },
+
+    buildForm: function () {
+        return this.user;
     }
 };
 
 var StudentBuilderTest = {
     init: function () {
+        this.builder = {};
 
-        this.builder = {
-            grade: 10,
-            classNumber: 100,
-            studentId: '11102'
-        };
+        this.builder.grade = 10;
+        this.builder.classNumber = 100;
+        this.builder.studentId = '11102';
     },
 
     withGrade: function (grade) {
@@ -64,73 +121,34 @@ var StudentBuilderTest = {
         return this;
     },
 
+    withClassNumber: function (classNumber) {
+        this.builder.classNumber = classNumber;
+        return this;
+    },
 
     build: function () {
-
+        return StudentFactory.create(this.builder);
     },
 
     buildForm: function () {
-        var userBuilder = Object.create(ValidUserFormBuilder);
+        var userBuilder = Object.create(UserBuilder);
         userBuilder.init();
 
-        var userForm = userBuilder.buildForm();
-        return _.assign({}, userForm, {
-            studentForm: {
-                grade: this.builder.grade,
-            }
-        })
+
+
+        var student = {
+            grade: this.builder.grade,
+            classNumber: this.builder.classNumber
+        };
+        return student;
     }
 };
 
-var AccountBuilderTest = {
-    init: function () {
-        this.builder = {};
-        this.builder = {
-            form: {
-                username: 'username1',
-                password: 'a4s9qc63s'
-            }
-        };
-        this.builder.hashedPassword = sha256(this.builder.form.password);
-        this.builder.role = Role.STUDENT;
-        this.builder.userId = '111'; // TODO make it more realistic
-    },
-
-    withUsername: function (username) {
-        this.builder.form.username = username;
-        return this;
-    },
-    withRole: function (role) {
-        this.builder.role = role;
-        return this;
-    },
-
-    withPassword: function (password) {
-        this.builder.form.password = password;
-        this.builder.hashedPassword = sha256(this.builder.form.password);
-        return this;
-    },
-
-    build: function () {
-        return AccountFactory.createFromForm(this.builder);
-    },
-
-    buildForm: function () {
-        var form = {
-            form: this.builder.form,
-
-            role: this.builder.role
-        };
-
-        return form;
-    }
-
-};
 
 var Fixtures = {
     user: {
         aUserForm: function () {
-            var validUserForm = Object.create(ValidUserFormBuilder);
+            var validUserForm = Object.create(UserBuilder);
             validUserForm.init();
             return validUserForm;
         }
@@ -145,8 +163,15 @@ var Fixtures = {
         }
 
 
-    }
+    },
 
+    student: {
+        aStudentForm: function () {
+            var validStudentForm = Object.create(StudentBuilderTest);
+            validStudentForm.init();
+            return validStudentForm;
+        }
+    }
 };
 
 module.exports = Fixtures;
