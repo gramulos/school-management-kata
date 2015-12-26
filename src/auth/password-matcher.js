@@ -4,7 +4,7 @@ var PasswordValidator = {
     init: function (args) {
 
     },
-    validate: function (args) {
+    match: function (args) {
 
     }
 };
