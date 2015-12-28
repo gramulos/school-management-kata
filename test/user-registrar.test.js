@@ -61,7 +61,9 @@ describe('testing user registrar', function () {
             userCreatorSpy = sinon.spy(UserFactory, 'createFromForm');
 
             var userSaver = UserSaverFactory.create();
-            userSaverSpy = sinon.spy(userSaver, 'save');
+            userSaverSpy = sinon.stub(userSaver, 'save', function(user, done) {
+                done();
+            });
 
             userRegistrar = UserRegistrarFactory.create({
                 userFormValidator: userFormValidator,

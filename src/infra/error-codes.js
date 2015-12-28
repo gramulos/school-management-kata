@@ -23,7 +23,7 @@ var ErrorCodes = {
     PASSWORD_NOT_EXIST: ApplicationErrorFactory.create(111, 'Password does not exist'),
     ROLE_NOT_EXIST: ApplicationErrorFactory.create(112, 'Role does not exist'),
     USER_NOT_SAVED: ApplicationErrorFactory.create(113, 'User not saved'),
-
+    STUDENT_IS_NOT_DEFINED: ApplicationErrorFactory.create(114, 'Student is null or empty')
 
 
 

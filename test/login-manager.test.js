@@ -7,7 +7,7 @@ var sinon = require('sinon');
 
 var LoginManagerFactory = require('../src/auth/login-manager');
 var UserFinderFactory = require('../src/users/user-finder');
-var PasswordValidatorFactory = require('../src/auth/password-validator');
+var PasswordValidatorFactory = require('../src/auth/password-matcher');
 var TokenGeneratorFactory = require('../src/auth/token-generator');
 var Fixtures = require('./fixtures');
 
@@ -37,7 +37,7 @@ describe('Login test', function () {
             });
 
             var passwordValidator = PasswordValidatorFactory.create();
-            passwordValidatorSpy = sinon.stub(passwordValidator, 'validate', function(password, hashedPassword) {
+            passwordValidatorSpy = sinon.stub(passwordValidator, 'match', function(password, hashedPassword) {
                 return true;
             });
 

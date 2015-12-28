@@ -7,7 +7,7 @@ var EmailSender = {
     },
 
     send: function (email, done) {
-        done(null, {});
+        done(null, true);
     }
 };
 

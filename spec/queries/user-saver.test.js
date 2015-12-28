@@ -3,32 +3,21 @@
 var chai = require('chai');
 chai.use(require('chai-shallow-deep-equal'));
 var assert = chai.assert;
-//var mongoose = require('mongoose');
 
+require('../test-helper');
 
-
-var UserFactory = require('../../src/users/user-factory');
+var UserFinderFactory = require('../../src/users/user-finder');
 var UserSaverFactory = require('../../src/users/user-saver');
+var UserFactory = require('../../src/users/user-factory');
 var Fixtures = require('../../test/fixtures');
 
 var UserModel = UserFactory.getModel();
 
-describe.only('UserSaver test', function () {
-    //var database = mongoose.connection;
+describe('UserSaver test', function () {
+
     var userBuilder = Fixtures.user;
 
-    //before(function (beforeDone) {
-    //    this.timeout(5000);
-    //
-    //    database.on('error', console.error);
-    //    database.once('open', function () {
-    //        console.log('mongodb connection open!');
-    //        beforeDone();
-    //    });
-    //    mongoose.connect('mongodb://gramulos:test123456@ds043714.mongolab.com:43714/schoolmanagement');
-    //});
-
-    describe('#save user into db', function () {
+    describe('#save user into db ', function () {
         var user;
 
         before(function (beforeDone) {
@@ -37,7 +26,8 @@ describe.only('UserSaver test', function () {
             var userSaver = UserSaverFactory.create();
             userSaver.save(user, function (err, savedUser) {
                 assert.isNotNull(savedUser);
-                beforeDone()
+
+                beforeDone();
             });
 
         });
@@ -48,25 +38,48 @@ describe.only('UserSaver test', function () {
             });
         });
 
-        it('should find the saved user from db', function (testDone) {
-
-            UserModel.findOne({id: user.id}, function (err, foundUser) {
-                assert.isNotNull(foundUser);
+        it('user should be saved to db', function (testDone) {
+            var userFinder = UserFinderFactory.create();
+            userFinder.findById(user.id, function (err, foundUser) {
+                assert.isDefined(foundUser);
+                assert.equal(foundUser.id, user.id, 'user id\'s doesn\'t match');
+                assert.equal(foundUser.name, user.name, 'user names\'s doesn\'t match');
                 testDone();
             });
         });
 
-
-
     });
 
+    describe('#save invalid user', function () {
+        var user;
 
-    //after(function () {
-    //    mongoose.models = {};
-    //    mongoose.modelSchemas = {};
-    //    mongoose.connection.close(function () {
-    //        console.log('Connection closed')
-    //    });
-    //});
+        before(function (beforeDone) {
+            user = userBuilder.aUserForm().build();
+            user.phone = '';
+
+            var userSaver = UserSaverFactory.create();
+            userSaver.save(user, function (err, savedUser) {
+                assert.isUndefined(savedUser);
+
+                beforeDone();
+            });
+        });
+
+        after(function (afterDone) {
+            UserModel.remove({}, function (err) {
+                afterDone();
+            });
+        });
+
+        it('user should not be saved', function (testDone) {
+            var userFinder = UserFinderFactory.create();
+            userFinder.findById(user.id, function (err, foundUser) {
+
+                assert.isNull(foundUser);
+                testDone();
+            });
+        });
+    });
+
 });
 

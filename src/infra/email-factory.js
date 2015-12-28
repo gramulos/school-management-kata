@@ -17,7 +17,6 @@ var EmailFactory = {
     createStudentRegistrationEmail: function (user) {
         var newEmail = Object.create(Email);
         newEmail.init(user);
-
         return newEmail;
     },
 

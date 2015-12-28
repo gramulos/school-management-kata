@@ -16,16 +16,17 @@ var AccountFormValidator = {
         var username = args.form.username;
         var password = args.form.password;
         var self= this;
-
         async.parallel({
-
             isValidUsername: function (next) {
                 self.usernamePolicyValidator.validate(username, next);
             },
             isValidPassword: function (next) {
+
                 var passwordValidationResult = PasswordPolicyValidator.validate(password);
+
                 return next(null, passwordValidationResult);
             }
+
         }, function (err, result) {
             if (err) {
                 return done(err);

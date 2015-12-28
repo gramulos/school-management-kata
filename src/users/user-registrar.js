@@ -14,7 +14,7 @@ var UserRegistrar = {
     init: function (args) {
         args = args || {};
         this.userFormValidator = args.userFormValidator || UserFormValidatorFactory.create();
-        this.accountGenerator = args.accountParamsGenerator || AccountParamsGeneratorFactory.create(args);
+        this.accountGenerator = args.accountParamsGenerator || AccountParamsGeneratorFactory.create();
         this.accountFormValidator = args.accountFormValidator || AccountFormValidator.create();
         this.userSaver = args.userSaver || UserSaverFactory.create();
     },
@@ -36,16 +36,22 @@ var UserRegistrar = {
             },
 
             function validateAccountForm(accountParams, next) {
-                self.accountFormValidator.validate(accountParams,function(err,result){
-                    return next(null, {isAccountValid: result, accountParams: accountParams});
+                console.log('1', accountParams)
+                self.accountFormValidator.validate(accountParams, function (err, result) {
+                    if (err) {
+                    } else {
+                        return next(null, {isAccountValid: result, accountParams: accountParams});
+                    }
                 });
+
 
                 //return next(null, {isAccountValid: isAccountValid, accountParams: accountParams})
             },
 
             function createAccountFromParams(accountForm, next) {
-                if(accountForm) {
-                    var form  = accountForm.accountParams.form;
+
+                if (accountForm) {
+                    var form = accountForm.accountParams.form;
                     var account = AccountFactory.createFromForm({
                         username: form.username,
                         password: form.password,
@@ -61,11 +67,12 @@ var UserRegistrar = {
 
             function createUser(account, next) {
 
-                var createdUser = UserFactory.createFromForm({ form: userRegistrationForm, account: account });
+                var createdUser = UserFactory.createFromForm({form: userRegistrationForm, account: account});
                 return next(null, createdUser);
             },
 
             function saveUser(createdUser, next) {
+                console.log('11',createdUser)
                 self.userSaver.save(createdUser, next);
             }
         ], function (err, isSaved) {
@@ -73,6 +80,7 @@ var UserRegistrar = {
                 return done(err);
             }
             else {
+                console.log('323232',isSaved)
                 return done(null, isSaved);
             }
         });

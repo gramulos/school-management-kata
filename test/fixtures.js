@@ -5,7 +5,7 @@ var Role = require('../src/infra/role');
 var AccountFactory = require('../src/users/account-factory');
 var UserFactory = require('../src/users/user-factory');
 var sha256 = require('sha256');
-var StudentFactory = require('../src/school/student-creator');
+var StudentFactory = require('../src/school/student-factory');
 
 var AccountBuilderTest = {
     init: function () {
@@ -77,7 +77,7 @@ var UserBuilder = {
     },
 
     withPhoneNumber: function (phoneNumber) {
-        this.user.phoneNumber = phoneNumber;
+        this.user.phone = phoneNumber;
         return this;
     },
 
@@ -126,15 +126,24 @@ var StudentBuilderTest = {
         return this;
     },
 
-    build: function () {
-        return StudentFactory.create(this.builder);
+    build: function (user) {
+        if(!user) {
+            var userBuilder = Object.create(UserBuilder);
+            userBuilder.init();
+
+            var accountBuilder = Object.create(AccountBuilderTest);
+            accountBuilder.init();
+
+            var account = accountBuilder.build();
+
+            user = userBuilder.build(account);
+        }
+        return StudentFactory.createFromForm({student: this.builder, userId: user.id});
     },
 
     buildForm: function () {
         var userBuilder = Object.create(UserBuilder);
         userBuilder.init();
-
-
 
         var student = {
             grade: this.builder.grade,

@@ -8,7 +8,7 @@ var UserFinderFactory = require('../../src/users/user-finder');
 var TokenGeneratorFactory = require('../../src/auth/token-generator');
 var UserFactory = require('../../src/users/user-factory');
 var TokenValidatorFactory = require('../../src/auth/token-validator');
-
+var Role = require('../../src/infra/role');
 
 describe('TokenGenerator test', function () {
 
@@ -30,7 +30,7 @@ describe('TokenGenerator test', function () {
 
             account = AccountBuilder.anAccount().build();
             user = UserBuilder.aUserForm().build(account);
-
+            user.account.role = Role.ADMIN;
             userFinder.find = function(err,user){
                 return user;
             }
@@ -40,7 +40,6 @@ describe('TokenGenerator test', function () {
 
             var actualToken = tokenGenerator.generate(user.id, user.account.role);
             tokenValidator = TokenValidatorFactory.create();
-
             tokenValidator.validate(actualToken, function (err, decodedUser) {
                 assert.equal(decodedUser.id, user.id );
                 assert.equal(decodedUser.role, user.account.role);

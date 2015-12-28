@@ -1,20 +1,31 @@
 'use strict';
+var HashProvider = require('../infra/hash-provider');
+var assert = require('assert');
 
-var PasswordValidator = {
+var PasswordMatcher = {
     init: function (args) {
 
     },
     match: function (args) {
+        assert.ok(args.hashedPassword, 'hashedPassword require');
+        assert.ok(args.password, 'password require');
 
+        var hashedPassword = HashProvider.hash(args.password);
+        if (args.hashedPassword === hashedPassword) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 };
 
-var PasswordValidatorFactory = {
+var PasswordMatcherFactory = {
     create: function (args) {
-        var passwordValidator = Object.create(PasswordValidator);
-        passwordValidator.init(args);
-        return passwordValidator;
+        var passwordMatcher = Object.create(PasswordMatcher);
+        passwordMatcher.init(args);
+        return passwordMatcher;
     }
 };
 
-module.exports = PasswordValidatorFactory;
+module.exports = PasswordMatcherFactory;

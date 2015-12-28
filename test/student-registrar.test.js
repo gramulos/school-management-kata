@@ -9,13 +9,14 @@ var StudentRegistrarFactory = require('../src/school/student-registrar');
 var TokenValidatorFactory = require('../src/auth/token-validator');
 var AuthorizerFactory = require('../src/auth/authorizer');
 var StudentRegistrationFormValidatorFactory = require('../src/school/student-registration-form-validator');
-var StudentCreatorFactory = require('../src/school/student-creator');
+var StudentCreatorFactory = require('../src/school/student-factory');
 var EmailSenderFactory = require('../src/infra/email-sender');
 var UserRegistrarFactory = require('../src/users/user-registrar');
 var AccountLoaderFactory = require('../src/users/account-loader-factory');
 var Fixtures = require('./fixtures');
 var UsernamePolicyValidatorFactory = require('../src/users/username-policy-validator');
 var AccountFormValidatorFactory = require('../src/users/account-form-validator');
+var StudentSaverFactory = require('../src/school/student-saver');
 
 describe('StudentRegistrar test', function () {
 
@@ -34,15 +35,16 @@ describe('StudentRegistrar test', function () {
         var studentCreatorSpy;
         var emailSenderSpy;
         var userRegistrarSpy;
+        var studentSaverSpy;
         var studentForm;
         var userForm;
 
         before(function (beforeDone) {
             studentForm = StudentRegistrationFormValidatorFactory.create();
             studentRegistrationForm = studentBuilder.aStudentForm().buildForm();
-            userForm = UserFormBuilder.aUserForm().build();
+            userForm = UserFormBuilder.aUserForm().buildForm();
             //studentRegistrationForm = UserFormBuilder.build();
-
+            var createdUser = UserFormBuilder.aUserForm().build();
             var tokenValidator = TokenValidatorFactory.create();
             tokenValidatorSpy = sinon.spy(tokenValidator, 'validate');
 
@@ -70,9 +72,18 @@ describe('StudentRegistrar test', function () {
             //console.log('test',studentRegistrationForm)
             var userRegistrar = UserRegistrarFactory.create({email: userForm.email, accountFormValidator: accountFormValidator});
             userRegistrarSpy = sinon.spy(userRegistrar, 'register');
+            sinon.stub(userRegistrar.userSaver, 'save', function (user, done) {
+                done(null, user);
+            });
 
             //var studentCreator = StudentCreatorFactory.create();
-            studentCreatorSpy = sinon.spy(StudentCreatorFactory, 'create');
+            studentCreatorSpy = sinon.spy(StudentCreatorFactory, 'createFromForm');
+
+            var studentSaver = StudentSaverFactory.create();
+            studentSaverSpy = sinon.stub(studentSaver, 'save', function (student, done) {
+                done(null, student);
+            });
+
 
             var emailSender = EmailSenderFactory.create();
             emailSenderSpy = sinon.spy(emailSender, 'send');
@@ -82,14 +93,22 @@ describe('StudentRegistrar test', function () {
                 authorizer: authorizer,
                 studentRegistrationFormValidator: studentRegistrationFormValidator,
                 userRegistrar: userRegistrar,
+                studentSaver: studentSaver,
                 emailSender: emailSender
             });
 
-            var testToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJkODU1YTM2MC1hYTFlLTExZTUtYWQxZC1kNzY3ZjVhOWQzMTMiLCJyb2xlIjoxLCJpYXQiOjE0NTA5NDg1MTUsImV4cCI6MTQ1MTAzNDkxNX0.815QW9QVQ9TNQQaT8347Am6YlQMh9o5t2QfidCJtjI4';
+            //var testToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJkODU1YTM2MC1hYTFlLTExZTUtYWQxZC1kNzY3ZjVhOWQzMTMiLCJyb2xlIjoxLCJpYXQiOjE0NTA5NDg1MTUsImV4cCI6MTQ1MTAzNDkxNX0.815QW9QVQ9TNQQaT8347Am6YlQMh9o5t2QfidCJtjI4';
+            var testToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJjYWI3MmVhMC1hYWVhLTExZTUtYjk1OS04OTQ4YTlkZTdlODQiLCJyb2xlIjoxLCJpYXQiOjE0NTEwMzYxMTB9.oM4JOZI_FNJGsIaKjCoAGBlxScKivFXUEW0L2qvXMLc';
 
-            studentRegistrar.register(testToken, studentRegistrationForm,userForm, function (err, result) {
+            var registrationForm = {
 
-                    beforeDone();
+                userForm: userForm,
+                studentForm: studentRegistrationForm
+            };
+
+            studentRegistrar.register(testToken, registrationForm, function (err, result) {
+
+                beforeDone();
             });
         });
 
@@ -106,11 +125,16 @@ describe('StudentRegistrar test', function () {
         });
 
         it('user should be registered', function () {
+
             assert.isTrue(userRegistrarSpy.calledOnce);
         });
 
         it('should create student', function () {
             assert.isTrue(studentCreatorSpy.calledOnce);
+        });
+
+        it('should save student', function () {
+            assert.isTrue(studentSaverSpy.calledOnce);
         });
 
         it('should send email to new registered student', function () {
@@ -124,6 +148,7 @@ describe('StudentRegistrar test', function () {
                 studentRegistrationFormValidatorSpy,
                 userRegistrarSpy,
                 studentCreatorSpy,
+                studentSaverSpy,
                 emailSenderSpy
             );
         });

@@ -1,11 +1,31 @@
 'use strict';
-
+var UserFactory = require('../users/user-factory');
 var UserFinder = {
     init: function (args) {
 
     },
     find: function (userName,done) {
 
+    },
+    findById:function(userId,done){
+        var Model = UserFactory.getModel();
+        Model.findOne({id:userId},function(err,foundUser){
+           if(err){
+               return done(err);
+           }
+            return done(null,foundUser);
+        })
+
+    },
+    findByIdNumber:function(idNumber,done){
+
+        var UserModel = UserFactory.getModel();
+        UserModel.findOne({idNumber:idNumber},function(err,foundUser){
+            if(err){
+                return done(err);
+            }
+            return done(null,foundUser);
+        })
     }
 };
 

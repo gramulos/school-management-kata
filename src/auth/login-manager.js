@@ -2,7 +2,7 @@
 var async = require('async');
 var ErrorCodes = require('../infra/error-codes');
 var UserFinderFactory = require('../users/user-finder');
-var PasswordValidatorFactory = require('../auth/password-validator');
+var PasswordValidatorFactory = require('./password-matcher');
 var TokenGeneratorFactory = require('../auth/token-generator');
 
 var LoginManager = {
@@ -22,7 +22,7 @@ var LoginManager = {
 
             function validatePassword(user, next) {
                 var account = user;
-                var isPasswordMatch = self.passwordValidator.validate(loginUser.password, account.hashedPassword);
+                var isPasswordMatch = self.passwordValidator.match(loginUser.password, account.hashedPassword);
                 return next(null, {isPasswordMatch: isPasswordMatch, account: account});
             },
 
