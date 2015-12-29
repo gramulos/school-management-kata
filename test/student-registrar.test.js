@@ -36,15 +36,12 @@ describe('StudentRegistrar test', function () {
         var emailSenderSpy;
         var userRegistrarSpy;
         var studentSaverSpy;
-        var studentForm;
         var userForm;
 
         before(function (beforeDone) {
-            studentForm = StudentRegistrationFormValidatorFactory.create();
             studentRegistrationForm = studentBuilder.aStudentForm().buildForm();
             userForm = UserFormBuilder.aUserForm().buildForm();
-            //studentRegistrationForm = UserFormBuilder.build();
-            var createdUser = UserFormBuilder.aUserForm().build();
+
             var tokenValidator = TokenValidatorFactory.create();
             tokenValidatorSpy = sinon.spy(tokenValidator, 'validate');
 
@@ -63,20 +60,21 @@ describe('StudentRegistrar test', function () {
                 var existingAccount = builder.build();
                 return done(null, existingAccount);
             };
+
             var usernamePolicyValidator = UsernamePolicyValidatorFactory.create({accountLoader: accountLoader});
 
             var accountFormValidator = AccountFormValidatorFactory.create({
-
                 usernamePolicyValidator: usernamePolicyValidator
             });
-            //console.log('test',studentRegistrationForm)
+
             var userRegistrar = UserRegistrarFactory.create({email: userForm.email, accountFormValidator: accountFormValidator});
             userRegistrarSpy = sinon.spy(userRegistrar, 'register');
+
             sinon.stub(userRegistrar.userSaver, 'save', function (user, done) {
                 done(null, user);
             });
 
-            //var studentCreator = StudentCreatorFactory.create();
+
             studentCreatorSpy = sinon.spy(StudentCreatorFactory, 'createFromForm');
 
             var studentSaver = StudentSaverFactory.create();

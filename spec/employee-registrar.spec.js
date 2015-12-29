@@ -6,14 +6,15 @@ chai.use(require('chai-shallow-deep-equal'));
 require('./test-helper');
 
 var EmailSenderFactory = require('../src/infra/email-sender');
-var DirectorRegistrarFactory = require('../src/school/director-registrar');
+var EmployeeRegistrarFactory = require('../src/school/employee-registrar');
 var UserFinderFactory = require('../src/users/user-finder');
+var Roles = require('../src/infra/role');
 
-describe('DirectorRegistrar test', function(){
+describe('EmployeeRegistrar test', function(){
 
-    describe('#register new director', function(){
+    describe('#register new employee - DIRECTOR', function(){
 
-        var directorRegistrar;
+        var employeeRegistrar;
         var emailSenderStub;
         var actualUserId;
 
@@ -25,7 +26,11 @@ describe('DirectorRegistrar test', function(){
                 done(null, this.sendCalled);
             };
 
-            var directorRegistrationForm = {
+            var employeeRegistrationForm = {
+                employeeForm: {
+                    salary: 547,
+                    role: Roles.DIRECTOR
+                },
                 userForm: {
                     firstName: 'azer',
                     lastName: 'safarov',
@@ -37,10 +42,10 @@ describe('DirectorRegistrar test', function(){
                 }
             };
 
-            directorRegistrar = DirectorRegistrarFactory.create({emailSender: emailSenderStub});
+            employeeRegistrar = EmployeeRegistrarFactory.create({emailSender: emailSenderStub});
 
             var testToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJjYWI3MmVhMC1hYWVhLTExZTUtYjk1OS04OTQ4YTlkZTdlODQiLCJyb2xlIjoxLCJpYXQiOjE0NTEwMzYxMTB9.oM4JOZI_FNJGsIaKjCoAGBlxScKivFXUEW0L2qvXMLc';
-            directorRegistrar.register(testToken, directorRegistrationForm, function (err, result) {
+            employeeRegistrar.register(testToken, employeeRegistrationForm, function (err, result) {
                 assert.isNull(err);
 
                 beforeDone();

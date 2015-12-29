@@ -6,6 +6,7 @@ var AccountFactory = require('../src/users/account-factory');
 var UserFactory = require('../src/users/user-factory');
 var sha256 = require('sha256');
 var StudentFactory = require('../src/school/student-factory');
+var EmployeeFactory = require('../src/school/employee-factory');
 
 var AccountBuilderTest = {
     init: function () {
@@ -153,6 +154,47 @@ var StudentBuilderTest = {
     }
 };
 
+var EmployeeBuilderTest = {
+    init: function(role) {
+        this.builder = {};
+
+        this.role = role;
+        this.builder.salary = 547;
+    },
+
+    withSalary: function(salary) {
+        this.builder.salary = salary;
+        return this;
+    },
+
+    build: function(user) {
+        if(!user) {
+            var userBuilder = Object.create(UserBuilder);
+            userBuilder.init();
+
+            var accountBuilder = Object.create(AccountBuilderTest);
+            accountBuilder.init();
+
+            var account = accountBuilder.build();
+
+            user = userBuilder.build(account);
+        }
+        return EmployeeFactory.createFromForm({employee: this.builder, userId: user.id});
+    },
+
+    buildForm: function(role) {
+        var userBuilder = Object.create(UserBuilder);
+        userBuilder.init();
+
+        var employee = {
+            role: role,
+            salary: 547
+        };
+
+        return employee;
+    }
+};
+
 
 var Fixtures = {
     user: {
@@ -179,6 +221,14 @@ var Fixtures = {
             var validStudentForm = Object.create(StudentBuilderTest);
             validStudentForm.init();
             return validStudentForm;
+        }
+    },
+
+    employee: {
+        anEmployee: function(role) {
+            var employeeForm = Object.create(EmployeeBuilderTest);
+            employeeForm.init(role);
+            return employeeForm;
         }
     }
 };
