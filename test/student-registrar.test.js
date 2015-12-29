@@ -141,7 +141,7 @@ describe('StudentRegistrar test', function () {
             assert.isTrue(emailSenderSpy.calledOnce);
         });
 
-        it('should called in correct order', function () {
+        it('should be called in correct order', function () {
             sinon.assert.callOrder(
                 tokenValidatorSpy,
                 authorizerSpy,

@@ -36,20 +36,17 @@ var UserRegistrar = {
             },
 
             function validateAccountForm(accountParams, next) {
-                console.log('1', accountParams)
                 self.accountFormValidator.validate(accountParams, function (err, result) {
                     if (err) {
-                    } else {
+
+                    }
+                    else {
                         return next(null, {isAccountValid: result, accountParams: accountParams});
                     }
                 });
-
-
-                //return next(null, {isAccountValid: isAccountValid, accountParams: accountParams})
             },
 
             function createAccountFromParams(accountForm, next) {
-
                 if (accountForm) {
                     var form = accountForm.accountParams.form;
                     var account = AccountFactory.createFromForm({
@@ -66,13 +63,11 @@ var UserRegistrar = {
             },
 
             function createUser(account, next) {
-
                 var createdUser = UserFactory.createFromForm({form: userRegistrationForm, account: account});
                 return next(null, createdUser);
             },
 
             function saveUser(createdUser, next) {
-                console.log('11',createdUser)
                 self.userSaver.save(createdUser, next);
             }
         ], function (err, isSaved) {
@@ -80,7 +75,6 @@ var UserRegistrar = {
                 return done(err);
             }
             else {
-                console.log('323232',isSaved)
                 return done(null, isSaved);
             }
         });

@@ -8,7 +8,6 @@ var UuidProviderFactory = require('../infra/uuid-provider');
 
 var Student = {
     init: function (args) {
-        console.log('dddd',args);
         assert.ok(args.id, 'invalid id');
         assert.ok(args.grade, 'invalid grade');
         assert.ok(args.classNumber, 'invalid classNumber');

@@ -90,7 +90,6 @@ var StudentRegistrar = {
                 return done(err);
             }
             else {
-                console.log('un',result)
                 return done(null,result);
             }
         });

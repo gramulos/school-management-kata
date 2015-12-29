@@ -21,7 +21,6 @@ var AccountFormValidator = {
                 self.usernamePolicyValidator.validate(username, next);
             },
             isValidPassword: function (next) {
-
                 var passwordValidationResult = PasswordPolicyValidator.validate(password);
 
                 return next(null, passwordValidationResult);

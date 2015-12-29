@@ -9,7 +9,7 @@ var UserRepository = {
 
     }
 
-}
+};
 
 
 module.exports = Object.freeze(UserRepository);

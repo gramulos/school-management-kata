@@ -1,14 +1,14 @@
 'use strict';
 var async = require('async');
 var ErrorCodes = require('../infra/error-codes');
-var UserFinderFactory = require('../users/user-finder');
+var AccountFinderFactory = require('../users/account-loader-factory');
 var PasswordValidatorFactory = require('./password-matcher');
 var TokenGeneratorFactory = require('../auth/token-generator');
 
 var LoginManager = {
     init: function (args) {
         args = args || {};
-        this.userFinder = args.userFinder || UserFinderFactory.create();
+        this.accountFinder = args.userFinder || AccountFinderFactory.create();
         this.passwordValidator = args.passwordValidator || PasswordValidatorFactory.create();
         this.tokenGenerator = args.tokenGenerator || TokenGeneratorFactory.create();
     },
@@ -17,23 +17,28 @@ var LoginManager = {
 
         async.waterfall([
             function findUser(next) {
-                self.userFinder.find(loginUser, next);
+                self.accountFinder.findByUsername(loginUser.username, next);
             },
 
             function validatePassword(user, next) {
-                var account = user;
-                var isPasswordMatch = self.passwordValidator.match(loginUser.password, account.hashedPassword);
-                return next(null, {isPasswordMatch: isPasswordMatch, account: account});
+                var account = user.account;
+
+                var isPasswordMatch = self.passwordValidator.match({password: loginUser.password, hashedPassword: account.hashedPassword});
+                return next(null, {isPasswordMatch: isPasswordMatch, user: user});
             },
 
             function generateToken(passwordValidationResult, next) {
                 var isPasswordMatch = passwordValidationResult.isPasswordMatch;
-                var account = passwordValidationResult.account;
+                var user = passwordValidationResult.user;
 
                 if (!isPasswordMatch) {
                     return next(ErrorCodes.LOGIN_FAILED);
                 }
-                self.tokenGenerator.generate(account.userId, account.role, next);
+
+                var token = self.tokenGenerator.generate(user.id, user.account.role);
+                if(token) {
+                    return next(null, token);
+                }
             }
 
         ], function (err, token) {

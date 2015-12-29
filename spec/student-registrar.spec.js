@@ -13,7 +13,7 @@ var SchoolRepository = require('../src/school/school-repository');
 
 describe('StudentRegistrar test', function () {
 
-    describe.only('#register new student', function () {
+    describe('#register new student', function () {
 
         var studentRegistrar;
         var emailSenderStub;
@@ -23,11 +23,9 @@ describe('StudentRegistrar test', function () {
 
             emailSenderStub = EmailSenderFactory.create();
             emailSenderStub.send = function (email, done) {
-                console.log('azer')
                 this.sendCalled = true;
                 done(null, this.sendCalled);
             };
-
 
             var studentRegistrationForm = {
 
@@ -75,7 +73,6 @@ describe('StudentRegistrar test', function () {
                     firstName: 'rufet'
 
                 };
-                console.log('actual', user)
                 assert.shallowDeepEqual(user, expected);
                 assert.isNotNull(user.id);
 

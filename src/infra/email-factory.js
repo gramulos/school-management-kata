@@ -22,6 +22,12 @@ var EmailFactory = {
 
     createAccountDetailsEmail: function (args) {
 
+    },
+
+    createDirectorRegistrationEmail: function(user){
+        var newEmail = Object.create(Email);
+        newEmail.init(user);
+        return newEmail;
     }
 };
 

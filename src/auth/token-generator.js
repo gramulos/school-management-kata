@@ -12,7 +12,7 @@ var TokenGenerator = {
     init: function (args) {
 
     },
-    generate: function (userId,role) {
+    generate: function (userId, role) {
 
         assert.ok(userId, 'user id is not provided');
         assert.ok(role, 'role is not provided');
@@ -22,19 +22,19 @@ var TokenGenerator = {
             role: role
         };
 
-       var token =  jwt.sign(user, Config.secretKey, {
+        var token = jwt.sign(user, Config.secretKey, {
             //expiresIn: 1440
         });
 
         return token;
     },
-    verifyToken:function(token){
+    verifyToken: function (token) {
 
     }
 };
 
 var TokenGeneratorFactory = {
-    create:function(args){
+    create: function (args) {
         var tokenGenerator = Object.create(TokenGenerator);
         tokenGenerator.init(args);
         return tokenGenerator;

@@ -22,7 +22,7 @@ var UserSaver = {
             phone: user.phone,
             email: user.email,
             imageUrl: user.imageUrl,
-            account: user.account,
+            account: user.account
         });
 
 
@@ -30,7 +30,6 @@ var UserSaver = {
             if (err) {
                 return done(err);
             } else {
-                console.log('43434',result)
                 return done(null, result);
             }
         });
