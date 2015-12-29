@@ -55,7 +55,7 @@ var EmployeeRegistrar = {
                         return next(ErrorCodes.INVALID_FORM)
                     }
 
-                    self.userRegistrar.register(Role.DIRECTOR, registrationForm.userForm, next);
+                    self.userRegistrar.register(registrationForm.employeeForm.role, registrationForm.userForm, next);
                 },
 
                 function createEmployee(registeredEmployee, next) {

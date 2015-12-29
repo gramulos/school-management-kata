@@ -58,7 +58,7 @@ describe('EmployeeRegistrar test', function(){
                 var expected = {
                     account: {
                         hashedPassword: '864d608a2dccfab024c3304030bcbb1caa8f38f1baa06a841cefe73a50c61ac0',
-                        role: 3,
+                        role: Roles.DIRECTOR,
                         username: 'azersafarov4s'
                     },
                     imageUrl: 'gramulos@images.com',

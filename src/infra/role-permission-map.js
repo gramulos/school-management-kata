@@ -12,8 +12,10 @@ var RolePermissionMap = {
         switch (role) {
             case Roles.ADMIN:
                 return [Actions.CREATE_STUDENT, Actions.CREATE_DIRECTOR, Actions.CREATE_ADMIN];
+
             case Roles.DIRECTOR:
                 return [Actions.CREATE_STUDENT];
+
             default:
                 return ErrorCodes.HAS_NO_PERMISSION;
         }
