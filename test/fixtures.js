@@ -9,6 +9,8 @@ var StudentFactory = require('../src/school/student-factory');
 var Fakes = require('../test/fakes');
 var DateProvider = require('../src/infra/date-provider');
 var UuidProvider = require('../src/infra/uuid-provider');
+var EmployeeFactory = require('../src/school/employee-factory');
+
 var AccountBuilderTest = {
     init: function () {
         this.builder = {};
@@ -186,6 +188,47 @@ var StudentBuilderTest = {
     }
 };
 
+var EmployeeBuilderTest = {
+    init: function(role) {
+        this.builder = {};
+
+        this.role = role;
+        this.builder.salary = 547;
+    },
+
+    withSalary: function(salary) {
+        this.builder.salary = salary;
+        return this;
+    },
+
+    build: function(user) {
+        if(!user) {
+            var userBuilder = Object.create(UserBuilder);
+            userBuilder.init();
+
+            var accountBuilder = Object.create(AccountBuilderTest);
+            accountBuilder.init();
+
+            var account = accountBuilder.build();
+
+            user = userBuilder.build(account);
+        }
+        return EmployeeFactory.createFromForm({employee: this.builder, userId: user.id});
+    },
+
+    buildForm: function(role) {
+        var userBuilder = Object.create(UserBuilder);
+        userBuilder.init();
+
+        var employee = {
+            role: role,
+            salary: 547
+        };
+
+        return employee;
+    }
+};
+
 
 var Fixtures = {
     user: {
@@ -214,12 +257,18 @@ var Fixtures = {
             return validStudentForm;
         }
     },
-
     token: {
         STUDENT_TOKEN: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIyM2U2ZGViMC1hZGVmLTExZTUtYTUwNS01YjAzMTU1NmE0NTAiLCJyb2xlIjoyLCJpYXQiOjE0NTEzODQ5OTN9.gTD79c4lgE5W752qjCkWkfwuduCtlfgXNRHZnpV8Mz0',
         ADMIN_TOKEN: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJjYWI3MmVhMC1hYWVhLTExZTUtYjk1OS04OTQ4YTlkZTdlODQiLCJyb2xlIjoxLCJpYXQiOjE0NTEwMzYxMTB9.oM4JOZI_FNJGsIaKjCoAGBlxScKivFXUEW0L2qvXMLc',
-        invalidToken: function(invalidToken){
+        invalidToken: function (invalidToken) {
             return invalidToken;
+        }
+    },
+    employee: {
+        anEmployee: function(role) {
+            var employeeForm = Object.create(EmployeeBuilderTest);
+            employeeForm.init(role);
+            return employeeForm;
         }
     }
 };

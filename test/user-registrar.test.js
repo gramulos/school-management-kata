@@ -32,11 +32,11 @@ describe('testing user registrar', function () {
         var userFormValidatorSpy;
         var accountFormValidatorSpy;
         var accountLoader;
+
         before(function (beforeDone) {
 
             accountLoader = AccountLoaderFactory.create();
             accountLoader.findByUsername = function (err, done) {
-                // account not found
                 return done(null, null);
             };
             var usernamePolicyValidator = UsernamePolicyValidatorFactory.create({accountLoader: accountLoader});

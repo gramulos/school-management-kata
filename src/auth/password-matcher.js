@@ -11,6 +11,7 @@ var PasswordMatcher = {
         assert.ok(args.password, 'password require');
 
         var hashedPassword = HashProvider.hash(args.password);
+
         if (args.hashedPassword === hashedPassword) {
             return true;
         }

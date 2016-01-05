@@ -38,17 +38,15 @@ var UserRegistrar = {
             function validateAccountForm(accountParams, next) {
                 self.accountFormValidator.validate(accountParams, function (err, result) {
                     if (err) {
-                    } else {
+
+                    }
+                    else {
                         return next(null, {isAccountValid: result, accountParams: accountParams});
                     }
                 });
-
-
-                //return next(null, {isAccountValid: isAccountValid, accountParams: accountParams})
             },
 
             function createAccountFromParams(accountForm, next) {
-
                 if (accountForm) {
                     var form = accountForm.accountParams.form;
                     var account = AccountFactory.createFromForm({
@@ -65,7 +63,6 @@ var UserRegistrar = {
             },
 
             function createUser(account, next) {
-
                 var createdUser = UserFactory.createFromForm({form: userRegistrationForm, account: account});
                 return next(null, createdUser);
             },

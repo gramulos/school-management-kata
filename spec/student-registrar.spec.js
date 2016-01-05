@@ -83,7 +83,7 @@ describe('StudentRegistrar test', function () {
                 var expected = userFormBuilder.aUserForm().build();
                 delete expected.id;
 
-
+                console.log('stu',user)
                 assert.shallowDeepEqual(user, expected);
                 assert.isNotNull(user.id);
 

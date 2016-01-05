@@ -6,7 +6,7 @@ var assert = chai.assert;
 var sinon = require('sinon');
 
 var LoginManagerFactory = require('../src/auth/login-manager');
-var UserFinderFactory = require('../src/users/user-finder');
+var UserFinderFactory = require('../src/users/account-loader-factory');
 var PasswordValidatorFactory = require('../src/auth/password-matcher');
 var TokenGeneratorFactory = require('../src/auth/token-generator');
 var Fixtures = require('./fixtures');
@@ -29,21 +29,35 @@ describe('Login test', function () {
         //var accountFormBuilder = Fixtures.account.anAccount();
         before(function (beforeDone) {
             // Given
-            var someUser ={};
+            var someUser = {
+                account: {
+                    hashedPassword: '01d7a732aa5c9549f417254155a50591725e3106be36a1d6eebffa54706d0de6',
+                    role: 2,
+                    username: 'rufetisayev5Z'
+                },
+                imageUrl: 'rufet@images.com',
+                email: 'rufetisayev@yahoo.com',
+                phone: '0518585529',
+                idNumber: '5ZJBKRJ',
+                patronymic: 'kamaleddin',
+                lastName: 'isayev',
+                firstName: 'rufet',
+                id: '4992dcf0-ad62-11e5-b5c4-19cb5e73b978'
+            };
 
             var userFinder = UserFinderFactory.create();
-            userFinderSpy = sinon.stub(userFinder, 'find', function(username, done) {
+            userFinderSpy = sinon.stub(userFinder, 'findByUsername', function (username, done) {
                 return done(null, someUser);
             });
 
             var passwordValidator = PasswordValidatorFactory.create();
-            passwordValidatorSpy = sinon.stub(passwordValidator, 'match', function(password, hashedPassword) {
+            passwordValidatorSpy = sinon.stub(passwordValidator, 'match', function (passwords) {
                 return true;
             });
 
             var tokenGenerator = TokenGeneratorFactory.create();
-            tokenGeneratorSpy = sinon.stub(tokenGenerator, 'generate', function(userId, role, done) {
-                return done(null, VALID_TOKEN);
+            tokenGeneratorSpy = sinon.stub(tokenGenerator, 'generate', function (userId, role) {
+                return VALID_TOKEN;
             });
 
             loginManager = LoginManagerFactory.create({
@@ -51,7 +65,6 @@ describe('Login test', function () {
                 passwordValidator: passwordValidator,
                 tokenGenerator: tokenGenerator
             });
-
 
             // When
             inputLoginUser = {
@@ -78,10 +91,10 @@ describe('Login test', function () {
         });
 
         it('should return valid JWT token', function () {
-           assert.equal(actualReturnedToken, VALID_TOKEN);
+            assert.equal(actualReturnedToken, VALID_TOKEN);
         });
 
-        it('should called in correct order', function() {
+        it('should called in correct order', function () {
             sinon.assert.callOrder(
                 userFinderSpy,
                 passwordValidatorSpy,

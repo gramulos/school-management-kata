@@ -39,10 +39,10 @@ describe('StudentRegistrar test', function () {
         var emailSenderSpy;
         var userRegistrarSpy;
         var studentSaverSpy;
-
         before(function (beforeDone) {
             studentForm = StudentRegistrationFormValidatorFactory.create();
             studentRegistrationForm = studentBuilder.aStudent().buildForm();
+        var userForm;
             userForm = UserFormBuilder.aUserForm().buildForm();
 
             var tokenValidator = TokenValidatorFactory.create();
@@ -63,10 +63,10 @@ describe('StudentRegistrar test', function () {
                 var existingAccount = builder.build();
                 return done(null, existingAccount);
             };
+
             var usernamePolicyValidator = UsernamePolicyValidatorFactory.create({accountLoader: accountLoader});
 
             var accountFormValidator = AccountFormValidatorFactory.create({
-
                 usernamePolicyValidator: usernamePolicyValidator
             });
             var userRegistrar = UserRegistrarFactory.create({
@@ -74,10 +74,10 @@ describe('StudentRegistrar test', function () {
                 accountFormValidator: accountFormValidator
             });
             userRegistrarSpy = sinon.spy(userRegistrar, 'register');
+
             sinon.stub(userRegistrar.userSaver, 'save', function (user, done) {
                 done(null, user);
             });
-
             studentCreatorSpy = sinon.spy(StudentCreatorFactory, 'createFromForm');
 
             var studentSaver = StudentSaverFactory.create();
@@ -138,7 +138,7 @@ describe('StudentRegistrar test', function () {
             assert.isTrue(emailSenderSpy.calledOnce);
         });
 
-        it('should called in correct order', function () {
+        it('should be called in correct order', function () {
             sinon.assert.callOrder(
                 tokenValidatorSpy,
                 authorizerSpy,

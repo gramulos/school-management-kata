@@ -7,6 +7,7 @@ var Authorizer = {
     },
 
     authorize: function (account) {
+        console.log('authorize',account)
         if(account.role === Role.ADMIN){
             return true;
         } else {

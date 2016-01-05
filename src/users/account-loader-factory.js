@@ -1,5 +1,7 @@
 'use strict';
 
+var ErrorCodes = require('../infra/error-codes');
+
 var UserFactory = require('../users/user-factory');
 
 var AccountLoader = {
@@ -8,13 +10,15 @@ var AccountLoader = {
 
     },
     findByUsername: function (username, done) {
-
         var Model = UserFactory.getModel();
         Model.findOne({'account.username': username}, function (err, user) {
             if (err) {
                 return done(err);
             }
-            return done(null, user);
+            else if(user === null){
+                return done(ErrorCodes.USERNAME_NOT_EXIST);
+            }
+            return done(null,user);
         });
 
     }

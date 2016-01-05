@@ -9,7 +9,6 @@ var UsernamePolicyValidator = {
     },
     validate: function(username, done) {
         this.accountLoader.findByUsername(username, function(err, account) {
-
             if(account) {
                 return done(null, false);
             }
