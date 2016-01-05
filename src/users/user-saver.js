@@ -3,6 +3,7 @@ var mongodb = require('mongodb');
 var mongoose = require('mongoose');
 var UserFactory = require('../users/user-factory');
 var assert = require('assert');
+
 var UserSaver = {
     init: function (args) {
 
@@ -22,7 +23,8 @@ var UserSaver = {
             phone: user.phone,
             email: user.email,
             imageUrl: user.imageUrl,
-            account: user.account
+            account: user.account,
+            createdDate: user.createdDate
         });
 
 

@@ -32,7 +32,12 @@ var UserFinder = {
             if (err) {
                 return done(err);
             }
-            return done(null, foundUser);
+            if (foundUser) {
+                return done(null, UserFactory.create(foundUser));
+            }
+            else {
+                return done(null, null);
+            }
         })
     }
 };

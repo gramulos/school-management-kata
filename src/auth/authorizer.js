@@ -1,4 +1,5 @@
 'use strict';
+var Role = require('../../src/infra/role');
 
 var RolePermissionMap = require('../infra/role-permission-map');
 var Roles = require('../infra/role');
@@ -26,6 +27,7 @@ var Authorizer = {
 
             case Roles.STUDENT:
                 return Actions.CREATE_STUDENT;
+
         }
     }
 };

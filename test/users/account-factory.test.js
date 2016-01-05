@@ -20,8 +20,8 @@ describe('Create account test', function () {
                 accountBuilder = AccountTestBuilder.anAccount();
 
                 accountData = {
-                    username: 'username1',
-                    password: 'a4s9qc63s',
+                    username: 'rufetisayev5Z',
+                    password: 'r5ZJBKRJi',
                     role: Role.STUDENT
                 };
 

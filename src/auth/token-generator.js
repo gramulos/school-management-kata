@@ -25,7 +25,6 @@ var TokenGenerator = {
         var token = jwt.sign(user, Config.secretKey, {
             //expiresIn: 1440
         });
-
         return token;
     },
     verifyToken: function (token) {

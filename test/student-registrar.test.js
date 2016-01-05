@@ -17,29 +17,32 @@ var Fixtures = require('./fixtures');
 var UsernamePolicyValidatorFactory = require('../src/users/username-policy-validator');
 var AccountFormValidatorFactory = require('../src/users/account-form-validator');
 var StudentSaverFactory = require('../src/school/student-saver');
+var ErrorCodes = require('../src/infra/error-codes');
 
 describe('StudentRegistrar test', function () {
 
     var UserFormBuilder = Fixtures.user;
     var AccountBuilderTest = Fixtures.account;
     var studentBuilder = Fixtures.student;
+    var TokenBuilder = Fixtures.token;
+    var studentRegistrar;
+    var studentRegistrationForm;
+    var tokenValidatorSpy;
+    var authorizerSpy;
+    var studentRegistrationFormValidatorSpy;
+    var studentForm;
+    var userForm;
 
     describe('#register new student', function () {
 
-        var studentRegistrar;
-        var studentRegistrationForm;
-
-        var tokenValidatorSpy;
-        var authorizerSpy;
-        var studentRegistrationFormValidatorSpy;
         var studentCreatorSpy;
         var emailSenderSpy;
         var userRegistrarSpy;
         var studentSaverSpy;
-        var userForm;
-
         before(function (beforeDone) {
-            studentRegistrationForm = studentBuilder.aStudentForm().buildForm();
+            studentForm = StudentRegistrationFormValidatorFactory.create();
+            studentRegistrationForm = studentBuilder.aStudent().buildForm();
+        var userForm;
             userForm = UserFormBuilder.aUserForm().buildForm();
 
             var tokenValidator = TokenValidatorFactory.create();
@@ -66,15 +69,15 @@ describe('StudentRegistrar test', function () {
             var accountFormValidator = AccountFormValidatorFactory.create({
                 usernamePolicyValidator: usernamePolicyValidator
             });
-
-            var userRegistrar = UserRegistrarFactory.create({email: userForm.email, accountFormValidator: accountFormValidator});
+            var userRegistrar = UserRegistrarFactory.create({
+                email: userForm.email,
+                accountFormValidator: accountFormValidator
+            });
             userRegistrarSpy = sinon.spy(userRegistrar, 'register');
 
             sinon.stub(userRegistrar.userSaver, 'save', function (user, done) {
                 done(null, user);
             });
-
-
             studentCreatorSpy = sinon.spy(StudentCreatorFactory, 'createFromForm');
 
             var studentSaver = StudentSaverFactory.create();
@@ -95,17 +98,13 @@ describe('StudentRegistrar test', function () {
                 emailSender: emailSender
             });
 
-            //var testToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJkODU1YTM2MC1hYTFlLTExZTUtYWQxZC1kNzY3ZjVhOWQzMTMiLCJyb2xlIjoxLCJpYXQiOjE0NTA5NDg1MTUsImV4cCI6MTQ1MTAzNDkxNX0.815QW9QVQ9TNQQaT8347Am6YlQMh9o5t2QfidCJtjI4';
-            var testToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJjYWI3MmVhMC1hYWVhLTExZTUtYjk1OS04OTQ4YTlkZTdlODQiLCJyb2xlIjoxLCJpYXQiOjE0NTEwMzYxMTB9.oM4JOZI_FNJGsIaKjCoAGBlxScKivFXUEW0L2qvXMLc';
+            var testToken = TokenBuilder.ADMIN_TOKEN;
 
             var registrationForm = {
-
                 userForm: userForm,
                 studentForm: studentRegistrationForm
             };
-
             studentRegistrar.register(testToken, registrationForm, function (err, result) {
-
                 beforeDone();
             });
         });
@@ -156,4 +155,66 @@ describe('StudentRegistrar test', function () {
         })
 
     });
+
+    describe('#register new student with invalid role {Role=Student}', function () {
+
+
+        before(function (beforeDone) {
+
+            var tokenValidator = TokenValidatorFactory.create();
+            tokenValidatorSpy = sinon.spy(tokenValidator, 'validate');
+
+            var authorizer = AuthorizerFactory.create();
+            authorizerSpy = sinon.spy(authorizer, 'authorize');
+
+            var studentRegistrationFormValidator = StudentRegistrationFormValidatorFactory.create();
+            studentRegistrationFormValidatorSpy = sinon.spy(studentRegistrationFormValidator, 'validate');
+
+            var builder = AccountBuilderTest.anAccount();
+
+            var accountLoader = AccountLoaderFactory.create();
+
+            accountLoader.findByUsername = function (err, done) {
+
+                var existingAccount = builder.build();
+                return done(null, existingAccount);
+            };
+
+            studentRegistrar = StudentRegistrarFactory.create({
+                tokenValidator: tokenValidator,
+                authorizer: authorizer,
+                studentRegistrationFormValidator: studentRegistrationFormValidator
+            });
+
+            var testToken = TokenBuilder.STUDENT_TOKEN;
+
+            var registrationForm = {
+                userForm: UserFormBuilder.aUserForm().buildForm(),
+                studentForm: studentBuilder.aStudent().buildForm()
+            };
+            studentRegistrar.register(testToken, registrationForm, function (err, result) {
+                assert.equal(err, ErrorCodes.HAS_NO_PERMISSION);
+                beforeDone();
+            });
+        });
+
+        it('user should have valid access token', function () {
+            assert.isTrue(tokenValidatorSpy.calledOnce);
+        });
+
+        it('user should not be authorized as ADMIN', function () {
+            assert.isTrue(authorizerSpy.calledOnce);
+        });
+
+        it('student registration form should not be validated', function () {
+            assert.isFalse(studentRegistrationFormValidatorSpy.calledOnce);
+        });
+
+        it('should called in correct order', function () {
+            sinon.assert.callOrder(
+                tokenValidatorSpy,
+                authorizerSpy
+            );
+        });
+    })
 });

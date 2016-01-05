@@ -10,7 +10,6 @@ var AccountLoader = {
 
     },
     findByUsername: function (username, done) {
-
         var Model = UserFactory.getModel();
         Model.findOne({'account.username': username}, function (err, user) {
             if (err) {
@@ -19,7 +18,7 @@ var AccountLoader = {
             else if(user === null){
                 return done(ErrorCodes.USERNAME_NOT_EXIST);
             }
-            return done(null, user);
+            return done(null,user);
         });
 
     }

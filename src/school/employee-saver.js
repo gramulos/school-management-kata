@@ -14,7 +14,6 @@ var EmployeeSaver = {
     },
 
     save: function (employee, done) {
-
         var employeeModel = EmployeeFactory.getModel();
 
         var employeeData = new employeeModel({

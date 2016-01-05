@@ -7,20 +7,40 @@ chai.use(require('chai-shallow-deep-equal'));
 var LoginManagerFactory = require('../src/auth/login-manager');
 var StudentRegistrarFactory = require('../src/school/student-registrar');
 var EmailSenderFactory = require('../src/infra/email-sender');
-var UserFinderFactory = require('../src/users/user-finder');
-var SchoolRepository = require('../src/school/school-repository');
-var UserRepository = require('../src/auth/user-repository');
 var TokenValidatorFactory = require('../src/auth/token-validator');
 var Role = require('../src/infra/role');
 var ErrorCodes = require('../src/infra/error-codes');
+var DateProviderFactory = require('../src/infra/date-provider');
+
+var mongoose = require('mongoose');
+var sinon = require('sinon');
+
+function clearDB(done) {
+    for (var i in mongoose.connection.collections) {
+        mongoose.connection.collections[i].remove(function() {});
+    }
+    return done();
+}
 
 describe('Login manager test', function () {
+
+
+    var dateProviderStub;
+    var dateProviderFactorySpy;
+    dateProviderStub = DateProviderFactory.create();
+    sinon.stub(dateProviderStub, 'now', function() {
+        return new Date(2014, 11, 25);
+    });
+    dateProviderFactorySpy = sinon.stub(DateProviderFactory, 'create', function() {
+        return dateProviderStub;
+    });
 
     describe('#login as student - valid username and password', function () {
 
         var actualToken;
         var studentRegistrar;
         var emailSenderStub;
+
 
         before(function (beforeDone) {
 
@@ -73,6 +93,9 @@ describe('Login manager test', function () {
                 testDone();
             });
         });
+
+
+
 
     });
 
@@ -136,7 +159,7 @@ describe('Login manager test', function () {
     });
 
 
-    describe('#login as student - invalid password', function () {
+    describe.skip('#login as student - invalid password', function () {
 
         var loginError;
         var studentRegistrar;
@@ -193,6 +216,9 @@ describe('Login manager test', function () {
 
     });
 
-
+    after(function (afterDone) {
+        dateProviderFactorySpy.restore();
+        clearDB(afterDone);
+    });
 
 });

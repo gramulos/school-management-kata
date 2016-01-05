@@ -22,7 +22,7 @@ describe('StudentSaver test', function () {
         var student;
 
         before(function (beforeDone) {
-            student = studentBuilder.aStudentForm().build();
+            student = studentBuilder.aStudent().build();
 
             var studentSaver = StudentSaverFactory.create();
             studentSaver.save(student, function (err, savedStudent) {
@@ -56,7 +56,7 @@ describe('StudentSaver test', function () {
         var student;
 
         before(function (beforeDone) {
-            student = studentBuilder.aStudentForm().build();
+            student = studentBuilder.aStudent().build();
             student.grade = '';
 
             var studentSaver = StudentSaverFactory.create();

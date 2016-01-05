@@ -18,7 +18,7 @@ describe('StudentRegistrationFormValidator test', function () {
 
         before(function () {
             studentRegistrationForm = StudentRegistrationFormValidatorFactory.create();
-            studentForm = studentBuilder.aStudentForm().buildForm();
+            studentForm = studentBuilder.aStudent().buildForm();
         });
 
         it('should return true', function () {
@@ -34,7 +34,7 @@ describe('StudentRegistrationFormValidator test', function () {
 
         before(function () {
             studentRegistrationForm = StudentRegistrationFormValidatorFactory.create();
-            studentForm = studentBuilder.aStudentForm().withGrade('').buildForm();
+            studentForm = studentBuilder.aStudent().withGrade('').buildForm();
         });
 
         it('should return true', function () {
@@ -50,7 +50,7 @@ describe('StudentRegistrationFormValidator test', function () {
 
         before(function () {
             studentRegistrationForm = StudentRegistrationFormValidatorFactory.create();
-            studentForm = studentBuilder.aStudentForm().withClassNumber('').buildForm();
+            studentForm = studentBuilder.aStudent().withClassNumber('').buildForm();
         });
 
         it('should return true', function () {
@@ -66,7 +66,7 @@ describe('StudentRegistrationFormValidator test', function () {
 
         before(function () {
             studentRegistrationForm = StudentRegistrationFormValidatorFactory.create();
-            studentForm = studentBuilder.aStudentForm().withGrade('ss').buildForm();
+            studentForm = studentBuilder.aStudent().withGrade('ss').buildForm();
         });
 
         it('should return true', function () {
@@ -82,7 +82,7 @@ describe('StudentRegistrationFormValidator test', function () {
 
         before(function () {
             studentRegistrationForm = StudentRegistrationFormValidatorFactory.create();
-            studentForm = studentBuilder.aStudentForm().withClassNumber('@#$').buildForm();
+            studentForm = studentBuilder.aStudent().withClassNumber('@#$').buildForm();
         });
 
         it('should return true', function () {

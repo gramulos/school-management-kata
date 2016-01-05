@@ -21,7 +21,6 @@ describe('Authorizer test', function () {
         };
 
         before(function () {
-
             var action = authorizer.convertRoleToAction(account.role);
             isAuthorized = authorizer.authorize(action, account);
         });
@@ -39,7 +38,6 @@ describe('Authorizer test', function () {
         };
 
         before(function () {
-
             var action = authorizer.convertRoleToAction(account.role);
             isAuthorized = authorizer.authorize(action, account);
         });

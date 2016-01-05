@@ -64,15 +64,12 @@ var EmployeeRegistrar = {
                     if (!registeredEmployee) {
                         return next(ErrorCodes.USER_NOT_SAVED);
                     }
-
                     var employeeData = _.assign({}, {employee: registrationForm.employeeForm}, {userId: registeredEmployee.id});
                     var employee = EmployeeCreatorFactory.createFromForm(employeeData);
-
                     return next(null, employee);
                 },
 
                 function saveEmployee(employee, next) {
-
                     if (!employee) {
                         return next(ErrorCodes.EMPLOYEE_IS_NOT_DEFINED)
                     }

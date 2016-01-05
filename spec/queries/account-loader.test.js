@@ -1,6 +1,5 @@
 'use strict';
 
-
 var chai = require('chai');
 var assert= chai.assert;
 
@@ -61,8 +60,9 @@ describe('testing the account finder',function(){
         });
 
         it('should return null as a result', function(testDone){
-            accountLoader.findByUsername(account.username, function(err){
+            accountLoader.findByUsername(account.username, function(err,account){
                 assert.equal(err, ErrorCodes.USERNAME_NOT_EXIST);
+
                 testDone();
             })
         });

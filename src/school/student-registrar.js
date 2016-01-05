@@ -51,7 +51,6 @@ var StudentRegistrar = {
             },
 
             function registerUser(isFormValid, next) {
-
                 if (!isFormValid) {
 
                     return next(ErrorCodes.INVALID_FORM);
@@ -60,8 +59,7 @@ var StudentRegistrar = {
                 self.userRegistrar.register(Role.STUDENT, registrationForm.userForm, next);
             },
 
-            function createStudent(registeredStudent, next) {
-
+            function createStudent(registeredStudent, next){
                 if (!registeredStudent) {
                     return next(ErrorCodes.USER_NOT_SAVED);
                 }
@@ -72,7 +70,6 @@ var StudentRegistrar = {
             },
 
             function saveStudent(student, next) {
-
                 if (!student) {
                     return next(ErrorCodes.STUDENT_IS_NOT_DEFINED)
                 }

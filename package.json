@@ -7,7 +7,8 @@
     "test": "mocha -c -w --reporter spec ./test/**/*.test.js ./test/test-helper.js",
     "testo": "mocha -c --reporter spec ./test/**/*.test.js",
     "spec": "mocha -c -w --reporter spec ./spec/**/*.spec.js ./test/test-helper.js",
-    "query": "mocha -c -w --reporter spec ./spec/queries/**/*.test.js --timeout 5000"
+    "query": "mocha -c -w --reporter spec ./spec/queries/**/*.test.js --timeout 5000",
+    "test:full": "mocha -c -w --reporter spec ./test/**/*.test.js ./spec/queries/**/*.test.js ./spec/**/*.spec.js ./test/test-helper.js"
   },
   "repository": {
     "type": "git",
@@ -29,6 +30,7 @@
   },
   "dependencies": {
     "async": "^1.5.0",
+    "date-format": "0.0.2",
     "jsonwebtoken": "^5.4.1",
     "lodash": "^3.10.1",
     "mongodb": "^2.1.2",
