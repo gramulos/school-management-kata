@@ -37,7 +37,8 @@ var EmployeeRegistrar = {
                 },
 
                 function authorize(account, next) {
-                    var isAuthorized = self.authorizer.authorize(Role.ADMIN, account);
+                    var action = self.authorizer.convertRoleToAction(registrationForm.employeeForm.role);
+                    var isAuthorized = self.authorizer.authorize(action, account);
                     return next(null, isAuthorized);
                 },
 

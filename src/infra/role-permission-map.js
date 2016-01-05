@@ -17,7 +17,7 @@ var RolePermissionMap = {
                 return [Actions.CREATE_STUDENT];
 
             default:
-                return ErrorCodes.HAS_NO_PERMISSION;
+                return [ErrorCodes.HAS_NO_PERMISSION];
         }
     }
 };

@@ -18,12 +18,12 @@ describe('Authorizer test', function () {
 
         var account = {
             role: Roles.STUDENT
-        }
+        };
 
         before(function () {
 
-
-            isAuthorized = authorizer.authorize(Roles.ADMIN, account);
+            var action = authorizer.convertRoleToAction(account.role);
+            isAuthorized = authorizer.authorize(action, account);
         });
 
         it('should return false', function () {
@@ -36,11 +36,12 @@ describe('Authorizer test', function () {
 
         var account = {
             role: Roles.ADMIN
-        }
+        };
 
         before(function () {
-            isAuthorized = authorizer.authorize(Roles.ADMIN, account);
 
+            var action = authorizer.convertRoleToAction(account.role);
+            isAuthorized = authorizer.authorize(action, account);
         });
 
         it('should return true', function () {

@@ -10,6 +10,7 @@ var UserFactory = require('../../src/users/user-factory');
 var UserSaverFactory = require('../../src/users/user-saver');
 var Fixtures = require('../../test/fixtures');
 var UserModel = UserFactory.getModel();
+var ErrorCodes = require('../../src/infra/error-codes');
 
 var AccountLoaderFactory = require('../../src/users/account-loader-factory');
 
@@ -60,12 +61,10 @@ describe('testing the account finder',function(){
         });
 
         it('should return null as a result', function(testDone){
-            accountLoader.findByUsername(account.username, function(err,account){
-                assert.isNull(account);
+            accountLoader.findByUsername(account.username, function(err){
+                assert.equal(err, ErrorCodes.USERNAME_NOT_EXIST);
                 testDone();
             })
-        })
-
+        });
     });
-
 });

@@ -14,6 +14,7 @@ var EmailSenderFactory = require('../infra/email-sender');
 var EmailFactory = require('../infra/email-factory');
 var UserRegistrarFactory = require('../users/user-registrar');
 var Role = require('../infra/role');
+var Actions = require('../infra/actions');
 
 var StudentRegistrar = {
 
@@ -37,7 +38,7 @@ var StudentRegistrar = {
             },
 
             function authorize(account, next) {
-                var isAuthorized = self.authorizer.authorize(Role.ADMIN, account);
+                var isAuthorized = self.authorizer.authorize(Actions.CREATE_STUDENT, account);
                 return next(null, isAuthorized);
             },
 

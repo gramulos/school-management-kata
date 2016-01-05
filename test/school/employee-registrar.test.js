@@ -18,6 +18,7 @@ var Fixtures = require('../fixtures');
 var EmployeeFactory = require('../../src/school/employee-factory');
 var EmployeeSaverFactory = require('../../src/school/employee-saver');
 var Roles = require('../../src/infra/role');
+var Actions = require('../../src/infra/actions');
 
 
 describe('EmployeeRegistrar test', function () {
@@ -102,7 +103,8 @@ describe('EmployeeRegistrar test', function () {
                     salary: 547,
                     role: Roles.DIRECTOR
                 },
-                userForm: userForm
+                userForm: userForm,
+                action: Actions.CREATE_DIRECTOR
             };
 
             employeeRegistrar.register(testToken, registrationForm, function (err, result) {
