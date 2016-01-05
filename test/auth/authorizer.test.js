@@ -21,9 +21,7 @@ describe('Authorizer test', function () {
         }
 
         before(function () {
-
-
-            isAuthorized = authorizer.authorize(Roles.ADMIN, account);
+            isAuthorized = authorizer.authorize(account);
         });
 
         it('should return false', function () {
@@ -39,7 +37,7 @@ describe('Authorizer test', function () {
         }
 
         before(function () {
-            isAuthorized = authorizer.authorize(Roles.ADMIN, account);
+            isAuthorized = authorizer.authorize(account);
 
         });
 

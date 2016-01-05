@@ -37,7 +37,7 @@ var StudentRegistrar = {
             },
 
             function authorize(account, next) {
-                var isAuthorized = self.authorizer.authorize(Role.ADMIN, account);
+                var isAuthorized = self.authorizer.authorize(account);
                 return next(null, isAuthorized);
             },
 
@@ -60,7 +60,6 @@ var StudentRegistrar = {
             },
 
             function createStudent(registeredStudent, next) {
-
                 if (!registeredStudent) {
                     return next(ErrorCodes.USER_NOT_SAVED);
                 }
@@ -90,7 +89,6 @@ var StudentRegistrar = {
                 return done(err);
             }
             else {
-                console.log('un',result)
                 return done(null,result);
             }
         });

@@ -7,7 +7,6 @@ var SchoolRepository = {
         var StudentModel = StudentFactory.getModel();
         StudentModel.findOne({userId:userId},function(err,foundStudent){
             if(err){
-                console.log('erre',err)
                 return done(err);
             }
             return done(null,foundStudent);

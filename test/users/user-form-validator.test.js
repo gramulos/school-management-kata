@@ -35,7 +35,7 @@ describe('UserFormValidator test', function () {
         before(function () {
             var userForm = userFormBuilder
                                 .withIdNumber('4s8a4f9d8e')
-                                .build();
+                                .buildForm();
 
             var userFormValidator =  UserFormValidatorFactory.create();
             validateResult = userFormValidator.validate(userForm);
@@ -52,7 +52,7 @@ describe('UserFormValidator test', function () {
         before(function () {
             var userForm = userFormBuilder
                                 .withPatronymic('kamaleddin9')
-                                .build();
+                                .buildForm();
 
             var userFormValidator =  UserFormValidatorFactory.create();
             validateResult = userFormValidator.validate(userForm);
@@ -69,7 +69,7 @@ describe('UserFormValidator test', function () {
         before(function () {
             var userForm = userFormBuilder
                 .withPhoneNumber('05185855295555')
-                .build();
+                .buildForm();
 
             var userFormValidator =  UserFormValidatorFactory.create();
             validateResult = userFormValidator.validate(userForm);
@@ -86,7 +86,7 @@ describe('UserFormValidator test', function () {
         before(function () {
             var userForm = userFormBuilder
                 .withEmail('rufet@imagescom')
-                .build();
+                .buildForm();
 
             var userFormValidator =  UserFormValidatorFactory.create();
             validateResult = userFormValidator.validate(userForm);

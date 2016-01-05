@@ -1,6 +1,8 @@
 'use strict';
 var jwt = require('jsonwebtoken');
 var Config = require('../infra/config');
+var ErrorCodes = require('../infra/error-codes');
+
 var TokenValidator = {
     init: function(args) {
     },
@@ -9,7 +11,7 @@ var TokenValidator = {
         if(token){
             jwt.verify(token, Config.secretKey, function(err,decoded){
                 if(err){
-                    return done(err);
+                    return done(ErrorCodes.INVALID_TOKEN);
                 }
                 else{
                     //decoded.role = 1;

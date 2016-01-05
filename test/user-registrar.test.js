@@ -15,11 +15,13 @@ var AccountLoaderFactory = require('../src/users/account-loader-factory');
 var Fixtures = require('./fixtures');
 var Role = require('../src/infra/role');
 var UsernamePolicyValidatorFactory = require('../src/users/username-policy-validator');
+var ErrorCode = require('../src/infra/error-codes');
 
 describe('testing user registrar', function () {
-    var userFormBuilder = Fixtures.user.aUserForm();
+    var userFormBuilder = Fixtures.user
 
-    describe('#generate user account', function () {
+    describe('#generate user account with correct input', function () {
+
         var userRegistrar;
         var input = {};
 
@@ -38,11 +40,8 @@ describe('testing user registrar', function () {
                 return done(null, null);
             };
             var usernamePolicyValidator = UsernamePolicyValidatorFactory.create({accountLoader: accountLoader});
-            //AccountLoader.findByUsername = function (err, done) {
-            //    done(null, false);
-            //};
 
-            input.userRegistrationForm = userFormBuilder.build();
+            input.userRegistrationForm = userFormBuilder.aUserForm().buildForm();
 
             var accountParamsGenerator = AccountParamsGeneratorFactory.create({
                 email: input.userRegistrationForm.email
@@ -61,7 +60,7 @@ describe('testing user registrar', function () {
             userCreatorSpy = sinon.spy(UserFactory, 'createFromForm');
 
             var userSaver = UserSaverFactory.create();
-            userSaverSpy = sinon.stub(userSaver, 'save', function(user, done) {
+            userSaverSpy = sinon.stub(userSaver, 'save', function (user, done) {
                 done();
             });
 
@@ -120,5 +119,57 @@ describe('testing user registrar', function () {
             accountFactorySpy.restore();
             userCreatorSpy.restore();
         })
+    })
+
+    describe('#generate user account with incorrect input', function () {
+
+
+        var userRegistrar;
+        var input = {};
+
+        var accountParamsGeneratorSpy;
+        var userFormValidatorSpy;
+        before(function (beforeDone) {
+
+            input.userRegistrationForm = userFormBuilder.aUserForm()
+                                                        .withIdNumber('')
+                                                        .buildForm();
+
+            var accountParamsGenerator = AccountParamsGeneratorFactory.create({
+                email: input.userRegistrationForm.email
+            });
+
+            accountParamsGeneratorSpy = sinon.spy(accountParamsGenerator, 'generate');
+
+            var userFormValidator = UserFormValidatorFactory.create();
+            userFormValidatorSpy = sinon.spy(userFormValidator, 'validate');
+
+            userRegistrar = UserRegistrarFactory.create({
+                userFormValidator: userFormValidator,
+                accountParamsGenerator: accountParamsGenerator
+            });
+
+            userRegistrar.register(Role.ADMIN, input.userRegistrationForm, function (err, user) {
+                assert.isDefined(err);
+                assert.isUndefined(user);
+                assert.equal(err,ErrorCode.INVALID_USER_FORM);
+                beforeDone();
+            });
+
+        });
+
+        it('should validate input form', function () {
+            assert.isTrue(userFormValidatorSpy.calledOnce);
+        });
+
+        it('should not generate account', function () {
+            assert.isFalse(accountParamsGeneratorSpy.calledOnce);
+        });
+
+        it('should called in correct order', function () {
+            sinon.assert.callOrder(
+                userFormValidatorSpy
+            )
+        });
     })
 });

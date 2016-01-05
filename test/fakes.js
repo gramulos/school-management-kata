@@ -7,7 +7,7 @@ var DateProviderFactory = require('../src/infra/date-provider');
 
 var TestConstants = {
     DATE: new Date(2013, 12, 23),
-    UUID: '9986afa0-aa4e-11e5-862c-c95bbb54ea5b'
+    UUID: '23e6deb0-adef-11e5-a505-5b031556a450'
 };
 
 

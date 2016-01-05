@@ -4,27 +4,34 @@ var UserFinder = {
     init: function (args) {
 
     },
-    find: function (userName,done) {
+    find: function (userName, done) {
 
     },
-    findById:function(userId,done){
+    findById: function (userId, done) {
         var Model = UserFactory.getModel();
-        Model.findOne({id:userId},function(err,foundUser){
-           if(err){
-               return done(err);
-           }
-            return done(null,foundUser);
+        Model.findOne({id: userId}, function (err, foundUser) {
+            if (err) {
+                return done(err);
+            }
+            return done(null, foundUser);
         })
 
     },
-    findByIdNumber:function(idNumber,done){
+    findByIdNumber: function (idNumber, done) {
 
         var UserModel = UserFactory.getModel();
-        UserModel.findOne({idNumber:idNumber},function(err,foundUser){
-            if(err){
+        UserModel.findOne({idNumber: idNumber}, function (err, foundUser) {
+            if (err) {
                 return done(err);
             }
-            return done(null,foundUser);
+
+            if (foundUser) {
+                return done(null, UserFactory.create(foundUser));
+            }
+            else {
+                return done(null, null);
+            }
+
         })
     }
 };

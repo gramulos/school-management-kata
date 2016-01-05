@@ -36,7 +36,6 @@ var UserRegistrar = {
             },
 
             function validateAccountForm(accountParams, next) {
-                console.log('1', accountParams)
                 self.accountFormValidator.validate(accountParams, function (err, result) {
                     if (err) {
                     } else {
@@ -72,7 +71,6 @@ var UserRegistrar = {
             },
 
             function saveUser(createdUser, next) {
-                console.log('11',createdUser)
                 self.userSaver.save(createdUser, next);
             }
         ], function (err, isSaved) {
@@ -80,7 +78,6 @@ var UserRegistrar = {
                 return done(err);
             }
             else {
-                console.log('323232',isSaved)
                 return done(null, isSaved);
             }
         });

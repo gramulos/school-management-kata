@@ -3,54 +3,72 @@
 var chai = require('chai');
 var assert = chai.assert;
 chai.use(require('chai-shallow-deep-equal'));
+var sinon = require('sinon');
+
+
+var mongoose = require('mongoose');
+
 require('./test-helper');
 
 var StudentRegistrarFactory = require('../src/school/student-registrar');
 var EmailSenderFactory = require('../src/infra/email-sender');
 var UserFinderFactory = require('../src/users/user-finder');
 var SchoolRepository = require('../src/school/school-repository');
+var UserFactory = require('../src/users/user-factory');
 
+var ErrorCodes = require('../src/infra/error-codes');
+var Fixtures = require('../test/fixtures');
+var DateProviderFactory = require('../src/infra/date-provider');
+
+
+function clearDB(done) {
+    for (var i in mongoose.connection.collections) {
+        mongoose.connection.collections[i].remove(function() {});
+    }
+    return done();
+}
 
 describe('StudentRegistrar test', function () {
+    var studentFormBuilder = Fixtures.student;
+    var userFormBuilder = Fixtures.user;
+    var tokenBuilder = Fixtures.token;
 
-    describe.only('#register new student', function () {
+    describe('#register new student', function () {
 
         var studentRegistrar;
         var emailSenderStub;
         var actualUserId;
+        var registrationForm;
+
+        var dateProviderStub;
+        var dateProviderFactorySpy;
 
         before(function (beforeDone) {
 
             emailSenderStub = EmailSenderFactory.create();
             emailSenderStub.send = function (email, done) {
-                console.log('azer')
                 this.sendCalled = true;
                 done(null, this.sendCalled);
             };
 
+            dateProviderStub = DateProviderFactory.create();
+            sinon.stub(dateProviderStub, 'now', function() {
+                return new Date(2014, 11, 25);
+            });
+            dateProviderFactorySpy = sinon.stub(DateProviderFactory, 'create', function() {
+                return dateProviderStub;
+            });
 
-            var studentRegistrationForm = {
-
-                studentForm: {
-                    grade: '650',
-                    classNumber: '5a'
-                },
-                userForm: {
-                    firstName: 'rufet',
-                    lastName: 'isayev',
-                    patronymic: 'kamaleddin',
-                    idNumber: '5ZJBKRJ',
-                    email: 'rufetisayev@yahoo.com',
-                    phone: '0518585529',
-                    imageUrl: 'rufet@images.com'
-                }
-
+            registrationForm = {
+                userForm: userFormBuilder.aUserForm().buildForm(),
+                studentForm: studentFormBuilder.aStudent().buildForm()
             };
 
             studentRegistrar = StudentRegistrarFactory.create({emailSender: emailSenderStub});
 
-            var testToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJjYWI3MmVhMC1hYWVhLTExZTUtYjk1OS04OTQ4YTlkZTdlODQiLCJyb2xlIjoxLCJpYXQiOjE0NTEwMzYxMTB9.oM4JOZI_FNJGsIaKjCoAGBlxScKivFXUEW0L2qvXMLc';
-            studentRegistrar.register(testToken, studentRegistrationForm, function (err, result) {
+            var testToken = tokenBuilder.ADMIN_TOKEN;
+
+            studentRegistrar.register(testToken, registrationForm, function (err, result) {
                 assert.isNull(err);
 
                 beforeDone();
@@ -59,27 +77,16 @@ describe('StudentRegistrar test', function () {
 
         it('should create new user in db', function (testDone) {
             var UserFinder = UserFinderFactory.create();
-            UserFinder.findByIdNumber('5ZJBKRJ', function (err, user) {
-                var expected = {
-                    account: {
-                        hashedPassword: '01d7a732aa5c9549f417254155a50591725e3106be36a1d6eebffa54706d0de6',
-                        role: 2,
-                        username: 'rufetisayev5Z'
-                    },
-                    imageUrl: 'rufet@images.com',
-                    email: 'rufetisayev@yahoo.com',
-                    phone: '0518585529',
-                    idNumber: '5ZJBKRJ',
-                    patronymic: 'kamaleddin',
-                    lastName: 'isayev',
-                    firstName: 'rufet'
+            UserFinder.findByIdNumber(registrationForm.userForm.idNumber, function (err, user) {
+                actualUserId = user.id;
 
-                };
-                console.log('actual', user)
+                var expected = userFormBuilder.aUserForm().build();
+                delete expected.id;
+
+
                 assert.shallowDeepEqual(user, expected);
                 assert.isNotNull(user.id);
 
-                actualUserId = user.id;
                 testDone();
             })
         });
@@ -87,7 +94,6 @@ describe('StudentRegistrar test', function () {
         it('student should be created in db', function (testDone) {
             SchoolRepository.findStudentByUserId(actualUserId, function (err, student) {
                 assert.isNotNull(student);
-                assert.isNotNull(student.account);
                 testDone();
             });
         });
@@ -97,11 +103,96 @@ describe('StudentRegistrar test', function () {
         });
 
         after(function (afterDone) {
+            dateProviderFactorySpy.restore();
             clearDB(afterDone);
         });
 
-        function clearDB(done) {
-            done();
-        }
+    });
+
+    describe('#register student with invalid token', function () {
+
+        var studentRegistrar;
+        var registrationForm;
+
+        before(function (beforeDone) {
+
+            registrationForm = {
+                studentForm: studentFormBuilder.aStudent().buildForm(),
+                userForm: userFormBuilder.aUserForm().buildForm()
+            };
+
+            studentRegistrar = StudentRegistrarFactory.create();
+            var testToken = tokenBuilder.invalidToken('fake');
+
+            studentRegistrar.register(testToken, registrationForm, function (err, student) {
+                assert.equal(err, ErrorCodes.INVALID_TOKEN);
+
+                beforeDone();
+            });
+        });
+
+        it('should not save user in db', function (testDone) {
+            var UserFinder = UserFinderFactory.create();
+            UserFinder.findByIdNumber(registrationForm.userForm.idNumber, function (err, user) {
+                assert.isNull(user);
+                testDone();
+            })
+        });
+
+        after(function (afterDone) {
+            clearDB(afterDone);
+        });
+
+
+    });
+
+    describe('#register invalid registration form - grade missing', function () {
+
+        var studentRegistrar;
+        var emailSenderStub;
+        var registrationForm;
+        before(function (beforeDone) {
+
+            emailSenderStub = EmailSenderFactory.create();
+            emailSenderStub.sendCalled = false;
+            emailSenderStub.send = function (email, done) {
+                this.sendCalled = true;
+                done(null, this.sendCalled);
+            };
+
+            registrationForm = {
+                studentForm: studentFormBuilder.aStudent().withGrade('').buildForm(),
+                userForm: userFormBuilder.aUserForm().buildForm()
+            };
+
+            studentRegistrar = StudentRegistrarFactory.create({emailSender: emailSenderStub});
+
+            var testToken = tokenBuilder.ADMIN_TOKEN;
+            studentRegistrar.register(testToken, registrationForm, function (err, result) {
+                assert.isDefined(err);
+                assert.equal(err, ErrorCodes.INVALID_FORM);
+
+                beforeDone();
+            });
+        });
+
+        it('should not create new user in db', function (testDone) {
+            var userFinder = UserFinderFactory.create();
+            userFinder.findByIdNumber(registrationForm.studentForm.idNumber, function (err, user) {
+                assert.isNull(user);
+
+                testDone();
+            })
+        });
+
+
+        it('should not send email with the new account details', function () {
+            assert.isFalse(emailSenderStub.sendCalled);
+        });
+
+        after(function (afterDone) {
+            clearDB(afterDone);
+        });
+
     });
 });

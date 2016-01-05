@@ -10,13 +10,10 @@ var AccountLoader = {
     findByUsername: function (username, done) {
 
         var Model = UserFactory.getModel();
-        console.log('model',Model)
         Model.findOne({'account.username': username}, function (err, user) {
             if (err) {
-                console.log('ERROR', err);
                 return done(err);
             }
-            console.log('USER', user);
             return done(null, user);
         });
 

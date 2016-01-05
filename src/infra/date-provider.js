@@ -1,4 +1,5 @@
 'use strict';
+var DateFormat = require('date-format');
 
 var DateProvider = {
     init: function() {

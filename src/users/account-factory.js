@@ -23,7 +23,12 @@ var AccountFactory = {
         args = args.form || args;
         assert.ok(args.password, ErrorCodes.PASSWORD_NOT_EXIST);
         args.hashedPassword = HashProvider.hash(args.password);
+        var newAccount = Object.create(Account);
+        newAccount.init(args);
+        return newAccount;
+    },
 
+    create: function(args) {
         var newAccount = Object.create(Account);
         newAccount.init(args);
         return newAccount;

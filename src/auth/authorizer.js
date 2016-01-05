@@ -1,12 +1,13 @@
 'use strict';
+var Role = require('../../src/infra/role');
 
 var Authorizer = {
     init: function (args) {
 
     },
 
-    authorize: function (role, account) {
-        if(role === account.role){
+    authorize: function (account) {
+        if(account.role === Role.ADMIN){
             return true;
         } else {
             return false;
