@@ -103,8 +103,7 @@ describe('EmployeeRegistrar test', function () {
                     salary: 547,
                     role: Roles.DIRECTOR
                 },
-                userForm: userForm,
-                action: Actions.CREATE_DIRECTOR
+                userForm: userForm
             };
 
             employeeRegistrar.register(testToken, registrationForm, function (err, result) {

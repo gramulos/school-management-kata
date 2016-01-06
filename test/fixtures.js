@@ -10,6 +10,7 @@ var Fakes = require('../test/fakes');
 var DateProvider = require('../src/infra/date-provider');
 var UuidProvider = require('../src/infra/uuid-provider');
 var EmployeeFactory = require('../src/school/employee-factory');
+var GradeFactory = require('../src/school/grade-factory');
 
 var AccountBuilderTest = {
     init: function () {
@@ -229,6 +230,31 @@ var EmployeeBuilderTest = {
     }
 };
 
+var GradeBuilder = {
+    init: function() {
+        this.builder = {};
+
+        this.builder.number = '1';
+        this.builder.groups = {};
+        this.builder.plan = {}
+    },
+
+    build: function(){
+
+        return GradeFactory.createFromForm({gradeForm: this.builder});
+    },
+
+    buildForm: function() {
+        return {
+            number: this.builder.number
+        }
+    },
+
+    withNumber: function(number) {
+        this.builder.number = number;
+        return this;
+    }
+};
 
 var Fixtures = {
     user: {
@@ -240,14 +266,11 @@ var Fixtures = {
     },
 
     account: {
-
         anAccount: function () {
             var accountBuilder = Object.create(AccountBuilderTest);
             accountBuilder.init();
             return accountBuilder;
         }
-
-
     },
 
     student: {
@@ -257,6 +280,7 @@ var Fixtures = {
             return validStudentForm;
         }
     },
+
     token: {
         STUDENT_TOKEN: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIyM2U2ZGViMC1hZGVmLTExZTUtYTUwNS01YjAzMTU1NmE0NTAiLCJyb2xlIjoyLCJpYXQiOjE0NTEzODQ5OTN9.gTD79c4lgE5W752qjCkWkfwuduCtlfgXNRHZnpV8Mz0',
         ADMIN_TOKEN: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJjYWI3MmVhMC1hYWVhLTExZTUtYjk1OS04OTQ4YTlkZTdlODQiLCJyb2xlIjoxLCJpYXQiOjE0NTEwMzYxMTB9.oM4JOZI_FNJGsIaKjCoAGBlxScKivFXUEW0L2qvXMLc',
@@ -264,11 +288,20 @@ var Fixtures = {
             return invalidToken;
         }
     },
+
     employee: {
         anEmployee: function(role) {
             var employeeForm = Object.create(EmployeeBuilderTest);
             employeeForm.init(role);
             return employeeForm;
+        }
+    },
+
+    grade: {
+        aGradeForm: function() {
+            var gradeForm = Object.create(GradeBuilder);
+            gradeForm.init();
+            return gradeForm;
         }
     }
 };
