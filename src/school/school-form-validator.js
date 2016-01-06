@@ -5,15 +5,15 @@ var REGEX_SYMBOL = /\W+/g;
 var REGEX_EMAIL = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 var REGEX_NOT_DIGIT = /\D/g;
 
-var UniversityFormValidator = {
+var SchoolFormValidator = {
     init:function(){
 
     },
-    validate: function(universityForm){
-        if(this.validateName(universityForm.name) &&
-        this.validateEmail(universityForm.email) &&
-        this.validatePhoneNumber(universityForm.phone) &&
-        this.validateAddress(universityForm.address)){
+    validate: function(schoolForm){
+        if(this.validateName(schoolForm.name) &&
+        this.validateEmail(schoolForm.email) &&
+        this.validatePhoneNumber(schoolForm.phone) &&
+        this.validateAddress(schoolForm.address)){
             return true;
         }else{
             return false;
@@ -49,12 +49,12 @@ var UniversityFormValidator = {
     }
 };
 
-var UniversityFormValidatorFactory = {
+var SchoolFormValidatorFactory = {
     create:function(){
-        var universityFormValidator = Object.create(UniversityFormValidator);
-        universityFormValidator.init();
-        return universityFormValidator;
+        var schoolFormValidator = Object.create(SchoolFormValidator);
+        schoolFormValidator.init();
+        return schoolFormValidator;
     }
 };
 
-module.exports = UniversityFormValidatorFactory;
+module.exports = SchoolFormValidatorFactory;

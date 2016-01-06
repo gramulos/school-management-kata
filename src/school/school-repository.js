@@ -1,18 +1,17 @@
 'use strict';
-var StudentFactory = require('../school/student-factory');
+
+var SchoolFactory = require('./school-factory');
 
 var SchoolRepository = {
-
-    findStudentByUserId: function (userId, done) {
-        var StudentModel = StudentFactory.getModel();
-        StudentModel.findOne({userId:userId},function(err,foundStudent){
+    findSchoolByName: function(schoolName, done){
+        var SchoolModel = SchoolFactory.getModel();
+        SchoolModel.findOne({name:schoolName}, function(err, school){
             if(err){
                 return done(err);
             }
-            return done(null,foundStudent);
+            return done(null,school);
         })
     }
 };
-
 
 module.exports = Object.freeze(SchoolRepository);

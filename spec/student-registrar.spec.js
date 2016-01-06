@@ -13,7 +13,7 @@ require('./test-helper');
 var StudentRegistrarFactory = require('../src/school/student-registrar');
 var EmailSenderFactory = require('../src/infra/email-sender');
 var UserFinderFactory = require('../src/users/user-finder');
-var SchoolRepository = require('../src/school/school-repository');
+var SchoolRepository = require('../src/school/student-repository');
 var UserFactory = require('../src/users/user-factory');
 
 var ErrorCodes = require('../src/infra/error-codes');

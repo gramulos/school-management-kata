@@ -7,7 +7,7 @@ var mongoose = require('mongoose');
 var UuidProviderFactory = require('../infra/uuid-provider');
 var DateProviderFactory = require('../infra/date-provider');
 
-var University = {
+var School = {
     init: function (args) {
         assert.ok(args.id, 'Invalid id');
         assert.ok(args.name, 'Invalid name');
@@ -24,7 +24,7 @@ var University = {
     }
 };
 
-var universitySchema = new mongoose.Schema({
+var schoolSchema = new mongoose.Schema({
     id: {type: String, required: true},
     name: {type: String, required: true},
     email: {type: String, required: true},
@@ -33,30 +33,30 @@ var universitySchema = new mongoose.Schema({
     createdDate: {type: Date, required: true}
 });
 
-var UniversityModel = mongoose.model('UniversityModel',universitySchema);
+var SchoolModel = mongoose.model('SchoolModel',schoolSchema);
 
-var UniversityFactory = {
+var SchoolFactory = {
     createFromForm: function (args) {
         assert.ok(args.form, 'form is required');
         var uuidProvider = args.uuidProvider || UuidProviderFactory.create();
         var dateProvider = args.dateProvider || DateProviderFactory.create();
-        var universityData = _.assign({
+        var schoolData = _.assign({
             id: uuidProvider.v1(),
             createdDate: dateProvider.now()
         }, args.form);
 
-        var university = Object.create(University);
-        university.init(universityData);
-        return university;
+        var school = Object.create(School);
+        school.init(schoolData);
+        return school;
     },
     create: function(args){
-        var university = Object.create(University);
-        university.init(args);
-        return university;
+        var school = Object.create(School);
+        school.init(args);
+        return school;
     },
     getModel:function(){
-        return UniversityModel;
+        return SchoolModel;
     }
 };
 
-module.exports = UniversityFactory;
+module.exports = SchoolFactory;

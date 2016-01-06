@@ -27,7 +27,8 @@ var ErrorCodes = {
     INVALID_TOKEN:ApplicationErrorFactory.create(115,'Token is invalid'),
     INVALID_PASSWORD: ApplicationErrorFactory.create(115, 'Password is not valid'),
     EMPLOYEE_IS_NOT_DEFINED: ApplicationErrorFactory.create(116, 'Employee is null or empty'),
-    UNIVERSITY_IS_NOT_DEFINED: ApplicationErrorFactory.create(117,'University is null or empty')
+    SCHOOL_IS_NOT_DEFINED: ApplicationErrorFactory.create(117,'School is null or empty'),
+    CLASSROOM_IS_NOT_DEFINED: ApplicationErrorFactory.create(118,'Classroom is null or empty')
 };
 
 module.exports = ErrorCodes;

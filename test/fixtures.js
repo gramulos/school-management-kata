@@ -10,7 +10,8 @@ var Fakes = require('../test/fakes');
 var DateProvider = require('../src/infra/date-provider');
 var UuidProvider = require('../src/infra/uuid-provider');
 var EmployeeFactory = require('../src/school/employee-factory');
-var UniversityFactory = require('../src/school/university-factory');
+var SchoolFactory = require('../src/school/school-factory');
+var ClassroomFactory = require('../src/school/classroom-factory');
 
 var AccountBuilderTest = {
     init: function () {
@@ -230,7 +231,7 @@ var EmployeeBuilderTest = {
     }
 };
 
-var UniversityBuilder = {
+var SchoolBuilder = {
     init:function(){
         this.builder = {};
 
@@ -257,15 +258,45 @@ var UniversityBuilder = {
         var uuidProviderFake = Fakes.getUuidProviderFake();
         var dateProvider = DateProvider.create();
 
-        var university = UniversityFactory.create({
+        var school = SchoolFactory.create({
             id:uuidProviderFake.getValue(),
             name:this.builder.name,
             email:this.builder.email,
             phone:this.builder.phone,
             address:this.builder.address,
             createdDate:dateProvider.now()
-        })
-        return university;
+        });
+        return school;
+    }
+};
+
+var ClassroomBuilder = {
+    init:function(){
+        this.builder = {};
+
+        this.builder.number = '708';
+        this.builder.description = 'Physic room';
+    },
+    withNumber:function(number){
+        this.builder.number = number;
+        return this;
+    },
+
+    buildForm:function(){
+        return this.builder;
+    },
+    build:function(){
+        var uuidProviderFake = Fakes.getUuidProviderFake();
+        var dateProvider = DateProvider.create();
+
+
+        var classroom = ClassroomFactory.create({
+            id:uuidProviderFake.getValue(),
+            createdDate:dateProvider.now(),
+            number:this.builder.number,
+            description:this.builder.description
+        });
+        return classroom;
     }
 };
 
@@ -309,13 +340,22 @@ var Fixtures = {
             return employeeForm;
         }
     },
-    university:{
-        aUniversityForm:function(){
-            var universityForm = Object.create(UniversityBuilder);
-            universityForm.init();
-            return universityForm;
+    school:{
+        aSchoolForm:function(){
+            var schoolForm = Object.create(SchoolBuilder);
+            schoolForm.init();
+            return schoolForm;
+        }
+    },
+
+    classroom:{
+        aClassroomForm:function(){
+            var classRoomForm = Object.create(ClassroomBuilder);
+            classRoomForm.init();
+            return classRoomForm;
         }
     }
+
 };
 
 module.exports = Fixtures;

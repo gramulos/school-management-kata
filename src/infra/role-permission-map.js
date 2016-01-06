@@ -11,9 +11,9 @@ var RolePermissionMap = {
     getRolePermission: function(role) {
         switch (role) {
             case Roles.ROOT_ADMIN:
-                return [Actions.CREATE_UNIVERSITY, Actions.CREATE_ADMIN];
+                return [Actions.CREATE_SCHOOL, Actions.CREATE_ADMIN];
             case Roles.ADMIN:
-                return [Actions.CREATE_STUDENT, Actions.CREATE_DIRECTOR, Actions.CREATE_ADMIN];
+                return [Actions.CREATE_STUDENT, Actions.CREATE_DIRECTOR, Actions.CREATE_ADMIN,Actions.CREATE_CLASSROOM];
 
             case Roles.DIRECTOR:
                 return [Actions.CREATE_STUDENT];
