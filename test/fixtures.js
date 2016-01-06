@@ -11,6 +11,8 @@ var DateProvider = require('../src/infra/date-provider');
 var UuidProvider = require('../src/infra/uuid-provider');
 var EmployeeFactory = require('../src/school/employee-factory');
 var GradeFactory = require('../src/school/grade-factory');
+var SchoolFactory = require('../src/school/school-factory');
+var ClassroomFactory = require('../src/school/classroom-factory');
 
 var AccountBuilderTest = {
     init: function () {
@@ -256,6 +258,75 @@ var GradeBuilder = {
     }
 };
 
+var SchoolBuilder = {
+    init:function(){
+        this.builder = {};
+
+        this.builder.name = 'BDU';
+        this.builder.email = 'bdu@bdu.az';
+        this.builder.phone = '0518585529';
+        this.builder.address = 'Baki';
+    },
+
+    withName:function(name){
+      this.builder.name = name;
+      return this;
+    },
+
+    withEmail: function (email) {
+        this.builder.email = email;
+        return this;
+    },
+
+    buildForm:function(){
+        return this.builder;
+    },
+    build:function(){
+        var uuidProviderFake = Fakes.getUuidProviderFake();
+        var dateProvider = DateProvider.create();
+
+        var school = SchoolFactory.create({
+            id:uuidProviderFake.getValue(),
+            name:this.builder.name,
+            email:this.builder.email,
+            phone:this.builder.phone,
+            address:this.builder.address,
+            createdDate:dateProvider.now()
+        });
+        return school;
+    }
+};
+
+var ClassroomBuilder = {
+    init:function(){
+        this.builder = {};
+
+        this.builder.number = '708';
+        this.builder.description = 'Physic room';
+    },
+    withNumber:function(number){
+        this.builder.number = number;
+        return this;
+    },
+
+    buildForm:function(){
+        return this.builder;
+    },
+    build:function(){
+        var uuidProviderFake = Fakes.getUuidProviderFake();
+        var dateProvider = DateProvider.create();
+
+
+        var classroom = ClassroomFactory.create({
+            id:uuidProviderFake.getValue(),
+            createdDate:dateProvider.now(),
+            number:this.builder.number,
+            description:this.builder.description
+        });
+        return classroom;
+    }
+};
+
 var Fixtures = {
     user: {
         aUserForm: function () {
@@ -264,7 +335,6 @@ var Fixtures = {
             return validUserForm;
         }
     },
-
     account: {
         anAccount: function () {
             var accountBuilder = Object.create(AccountBuilderTest);
@@ -282,6 +352,7 @@ var Fixtures = {
     },
 
     token: {
+        ROOT_ADMIN_TOKEN: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIyM2U2ZGViMC1hZGVmLTExZTUtYTUwNS01YjAzMTU1NmE0NTAiLCJyb2xlIjo0LCJpYXQiOjE0NTE5OTI2MTZ9.7z6TV4nlX4nO2IXbeaKeZtMO5Q_XgrZ5jVcsVv-njFU',
         STUDENT_TOKEN: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIyM2U2ZGViMC1hZGVmLTExZTUtYTUwNS01YjAzMTU1NmE0NTAiLCJyb2xlIjoyLCJpYXQiOjE0NTEzODQ5OTN9.gTD79c4lgE5W752qjCkWkfwuduCtlfgXNRHZnpV8Mz0',
         ADMIN_TOKEN: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJjYWI3MmVhMC1hYWVhLTExZTUtYjk1OS04OTQ4YTlkZTdlODQiLCJyb2xlIjoxLCJpYXQiOjE0NTEwMzYxMTB9.oM4JOZI_FNJGsIaKjCoAGBlxScKivFXUEW0L2qvXMLc',
         invalidToken: function (invalidToken) {
@@ -298,10 +369,27 @@ var Fixtures = {
     },
 
     grade: {
-        aGradeForm: function() {
+        aGradeForm: function () {
             var gradeForm = Object.create(GradeBuilder);
             gradeForm.init();
             return gradeForm;
+        }
+    },
+
+    school:{
+        aSchoolForm:function(){
+            var schoolForm = Object.create(SchoolBuilder);
+            schoolForm.init();
+            return schoolForm;
+        }
+    },
+
+    classroom:{
+        aClassroomForm:function(){
+            var classRoomForm = Object.create(ClassroomBuilder);
+            classRoomForm.init();
+            return classRoomForm;
+
         }
     }
 };

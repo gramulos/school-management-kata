@@ -16,7 +16,6 @@ var Authorizer = {
 
         return result !== -1;
     },
-
     convertRoleToAction: function(role) {
         switch (role) {
             case Roles.ADMIN:
