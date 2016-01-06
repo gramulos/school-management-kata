@@ -21,7 +21,7 @@ var EmployeeSaver = {
             userId: employee.userId,
             salary: employee.salary
         });
-        console.log('44')
+
         employeeData.save(function (err, result) {
             if (err) {
                 return done(err);

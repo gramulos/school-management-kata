@@ -8,6 +8,7 @@ var UniversityFormValidatorFactory = require('../school/university-form-validato
 var UniversityFactory = require('../school/university-factory');
 var UniversitySaverFactory = require('../school/university-saver');
 var ErrorCodes = require('../infra/error-codes');
+var Actions = require('../infra/actions');
 
 var UniversityRegistrar = {
     init: function (args) {
@@ -26,7 +27,7 @@ var UniversityRegistrar = {
                 self.tokenValidator.validate(token, next);
             },
             function authorize(account, next) {
-                var isAuthorized = self.authorizer.authorize(account);
+                var isAuthorized = self.authorizer.authorize(Actions.CREATE_UNIVERSITY,account);
                 return next(null, isAuthorized);
             },
             function validateUniversityForm(isAuthorized, next) {

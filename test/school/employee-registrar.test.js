@@ -18,6 +18,7 @@ var Fixtures = require('../fixtures');
 var EmployeeFactory = require('../../src/school/employee-factory');
 var EmployeeSaverFactory = require('../../src/school/employee-saver');
 var Roles = require('../../src/infra/role');
+var Actions = require('../../src/infra/actions');
 
 
 describe('EmployeeRegistrar test', function () {

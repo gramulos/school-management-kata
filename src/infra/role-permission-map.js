@@ -10,6 +10,8 @@ var RolePermissionMap = {
     },
     getRolePermission: function(role) {
         switch (role) {
+            case Roles.ROOT_ADMIN:
+                return [Actions.CREATE_UNIVERSITY, Actions.CREATE_ADMIN];
             case Roles.ADMIN:
                 return [Actions.CREATE_STUDENT, Actions.CREATE_DIRECTOR, Actions.CREATE_ADMIN];
 
@@ -17,7 +19,7 @@ var RolePermissionMap = {
                 return [Actions.CREATE_STUDENT];
 
             default:
-                return ErrorCodes.HAS_NO_PERMISSION;
+                return [ErrorCodes.HAS_NO_PERMISSION];
         }
     }
 };

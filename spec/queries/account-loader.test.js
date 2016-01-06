@@ -1,6 +1,5 @@
 'use strict';
 
-
 var chai = require('chai');
 var assert= chai.assert;
 
@@ -11,6 +10,7 @@ var UserSaverFactory = require('../../src/users/user-saver');
 var Fixtures = require('../../test/fixtures');
 var UserModel = UserFactory.getModel();
 var ErrorCodes = require('../../src/infra/error-codes');
+
 var AccountLoaderFactory = require('../../src/users/account-loader-factory');
 
 describe('testing the account finder',function(){
@@ -61,11 +61,10 @@ describe('testing the account finder',function(){
 
         it('should return null as a result', function(testDone){
             accountLoader.findByUsername(account.username, function(err,account){
-                assert.equal(err,ErrorCodes.USERNAME_NOT_EXIST);
+                assert.equal(err, ErrorCodes.USERNAME_NOT_EXIST);
+
                 testDone();
             })
-        })
-
+        });
     });
-
 });

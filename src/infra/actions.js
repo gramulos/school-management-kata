@@ -1,9 +1,11 @@
 'use strict';
 
 var Actions = {
-    CREATE_STUDENT: 1,
-    CREATE_ADMIN: 2,
-    CREATE_DIRECTOR: 3
+    CREATE_STUDENT: 'CREATE_STUDENT',
+    CREATE_ADMIN: 'CREATE_ADMIN',
+    CREATE_DIRECTOR: 'CREATE_DIRECTOR',
+    CREATE_UNIVERSITY: 'CREATE_UNIVERSITY'
+
 };
 
 module.exports = Actions;

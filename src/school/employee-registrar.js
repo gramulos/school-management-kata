@@ -37,12 +37,12 @@ var EmployeeRegistrar = {
                 },
 
                 function authorize(account, next) {
-                    var isAuthorized = self.authorizer.authorize(account);
+                    var action = self.authorizer.convertRoleToAction(registrationForm.employeeForm.role);
+                    var isAuthorized = self.authorizer.authorize(action, account);
                     return next(null, isAuthorized);
                 },
 
                 function validateEmployeeForm(isAuthorized, next) {
-                    console.log('$$',isAuthorized)
                     if (!isAuthorized) {
                         return next(ErrorCodes.HAS_NO_PERMISSION)
                     }
