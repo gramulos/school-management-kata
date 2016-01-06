@@ -12,8 +12,8 @@ var GradeSaver = {
     init: function(args) {
 
     },
-    save: function(grade, done) {
 
+    save: function(grade, done) {
         var Model = GradeFactory.getModel();
         var gradeData = new Model({
             id: grade.id,
@@ -23,7 +23,6 @@ var GradeSaver = {
         });
 
         gradeData.save(function (err, result) {
-
             if (err) {
                 return done(err);
             } else {

@@ -6,12 +6,10 @@ var GradeRegistrationFormValidator = {
 
     },
     validate: function(args){
-
         return this.validateNumber(args.number);
     },
 
     validateNumber: function(number){
-
         return String(number).length != 0 && !number.match(/\D/g);
     }
 };

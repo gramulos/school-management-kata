@@ -11,21 +11,11 @@ var EmployeeRegistrationFormValidator = {
     },
 
     validateRole: function (role) {
-        if(role > 0 && String(role).match(/\d/g)) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        return role > 0 && String(role).match(/\d/g);
     },
 
     validateSalary: function (salary) {
-        if (String(salary).length > 1 && !String(salary).match(/\W+/g)) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        return String(salary).length > 1 && !String(salary).match(/\W+/g);
     }
 };
 
