@@ -33,7 +33,6 @@ var EmployeeRegistrar = {
 
         async.waterfall([
                 function validateToken(next) {
-                    console.log(111)
                     self.tokenValidator.validate(token, next);
                 },
 
@@ -67,7 +66,6 @@ var EmployeeRegistrar = {
                     }
                     var employeeData = _.assign({}, {employee: registrationForm.employeeForm}, {userId: registeredEmployee.id});
                     var employee = EmployeeCreatorFactory.createFromForm(employeeData);
-                    console.log('rr',employee)
                     return next(null, employee);
                 },
 

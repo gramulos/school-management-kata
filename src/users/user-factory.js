@@ -74,7 +74,6 @@ var UserFactory = {
     },
 
     create: function (args) {
-        console.log('args',args)
         var user = Object.create(User);
         user.init(args);
         return user;

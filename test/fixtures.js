@@ -10,6 +10,7 @@ var Fakes = require('../test/fakes');
 var DateProvider = require('../src/infra/date-provider');
 var UuidProvider = require('../src/infra/uuid-provider');
 var EmployeeFactory = require('../src/school/employee-factory');
+var UniversityFactory = require('../src/school/university-factory');
 
 var AccountBuilderTest = {
     init: function () {
@@ -229,6 +230,45 @@ var EmployeeBuilderTest = {
     }
 };
 
+var UniversityBuilder = {
+    init:function(){
+        this.builder = {};
+
+        this.builder.name = 'BDU';
+        this.builder.email = 'bdu@bdu.az';
+        this.builder.phone = '0518585529';
+        this.builder.address = 'Baki';
+    },
+
+    withName:function(name){
+      this.builder.name = name;
+      return this;
+    },
+
+    withEmail: function (email) {
+        this.builder.email = email;
+        return this;
+    },
+
+    buildForm:function(){
+        return this.builder;
+    },
+    build:function(){
+        var uuidProviderFake = Fakes.getUuidProviderFake();
+        var dateProvider = DateProvider.create();
+
+        var university = UniversityFactory.create({
+            id:uuidProviderFake.getValue(),
+            name:this.builder.name,
+            email:this.builder.email,
+            phone:this.builder.phone,
+            address:this.builder.address,
+            createdDate:dateProvider.now()
+        })
+        return university;
+    }
+};
+
 
 var Fixtures = {
     user: {
@@ -238,7 +278,6 @@ var Fixtures = {
             return validUserForm;
         }
     },
-
     account: {
 
         anAccount: function () {
@@ -246,8 +285,6 @@ var Fixtures = {
             accountBuilder.init();
             return accountBuilder;
         }
-
-
     },
 
     student: {
@@ -258,6 +295,7 @@ var Fixtures = {
         }
     },
     token: {
+        ROOT_ADMIN_TOKEN: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIyM2U2ZGViMC1hZGVmLTExZTUtYTUwNS01YjAzMTU1NmE0NTAiLCJyb2xlIjo0LCJpYXQiOjE0NTE5OTI2MTZ9.7z6TV4nlX4nO2IXbeaKeZtMO5Q_XgrZ5jVcsVv-njFU',
         STUDENT_TOKEN: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIyM2U2ZGViMC1hZGVmLTExZTUtYTUwNS01YjAzMTU1NmE0NTAiLCJyb2xlIjoyLCJpYXQiOjE0NTEzODQ5OTN9.gTD79c4lgE5W752qjCkWkfwuduCtlfgXNRHZnpV8Mz0',
         ADMIN_TOKEN: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJjYWI3MmVhMC1hYWVhLTExZTUtYjk1OS04OTQ4YTlkZTdlODQiLCJyb2xlIjoxLCJpYXQiOjE0NTEwMzYxMTB9.oM4JOZI_FNJGsIaKjCoAGBlxScKivFXUEW0L2qvXMLc',
         invalidToken: function (invalidToken) {
@@ -269,6 +307,13 @@ var Fixtures = {
             var employeeForm = Object.create(EmployeeBuilderTest);
             employeeForm.init(role);
             return employeeForm;
+        }
+    },
+    university:{
+        aUniversityForm:function(){
+            var universityForm = Object.create(UniversityBuilder);
+            universityForm.init();
+            return universityForm;
         }
     }
 };

@@ -12,7 +12,7 @@ var SchoolRepository = {
             return done(null,foundStudent);
         })
     }
-}
+};
 
 
 module.exports = Object.freeze(SchoolRepository);
