@@ -28,7 +28,9 @@ var StudentRegistrationFormValidator = {
         else {
             return false;
         }
-    }
+    },
+
+
 };
 
 var StudentRegistrationFormValidatorFactory = {

@@ -5,7 +5,7 @@ var assert = chai.assert;
 
 var Fixtures = require('../test/fixtures');
 var ClassroomRegistrarFactory = require('../src/school/classroom-registrar');
-var ClassroomRepository = require('../src/school/classroom-repository');
+var ClassroomFinderFactory = require('../src/school/classroom-finder');
 var ErrorCodes = require('../src/infra/error-codes');
 var mongoose = require('mongoose');
 
@@ -38,7 +38,8 @@ describe('ClassroomRegistrar spec test', function () {
         });
 
         it('should create new schoolroom in db', function (testDone) {
-            ClassroomRepository.findClassroomByNumber(classroomForm.number, function (err, classroom) {
+            var classroomFinder = ClassroomFinderFactory.create();
+            classroomFinder.findClassroomByNumber(classroomForm.number, function (err, classroom) {
                 assert.isNotNull(classroom);
                 testDone();
             })
@@ -65,7 +66,8 @@ describe('ClassroomRegistrar spec test', function () {
         });
 
         it('should not save schoolroom in db', function (testDone) {
-            ClassroomRepository.findClassroomByNumber(classroomForm.number, function (err, classroom) {
+            var classroomFinder = ClassroomFinderFactory.create();
+            classroomFinder.findClassroomByNumber(classroomForm.number, function (err, classroom) {
                 assert.isNull(classroom);
                 testDone();
             })

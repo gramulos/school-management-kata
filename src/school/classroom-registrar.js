@@ -35,8 +35,7 @@ var ClassroomRegistrar = {
                 if (!isAuthorized) {
                     return next(ErrorCodes.HAS_NO_PERMISSION);
                 }
-                var isValidForm = self.classroomFormValidator.validate(classRoomForm);
-                return next(null, isValidForm);
+                self.classroomFormValidator.validate(classRoomForm,next);
             },
             function createClassroom(isValidForm, next) {
                 if (!isValidForm) {

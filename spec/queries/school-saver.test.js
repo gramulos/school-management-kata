@@ -8,7 +8,7 @@ require('../test-helper');
 var Fixtures = require('../../test/fixtures');
 var SchoolSaver = require('../../src/school/school-saver');
 var SchoolFactory = require('../../src/school/school-factory');
-var SchoolRepository = require('../../src/school/school-repository');
+var SchoolFinderFactory = require('../../src/school/school-finder');
 
 var SchoolModel = SchoolFactory.getModel();
 
@@ -34,7 +34,8 @@ describe('School saver', function () {
         });
 
         it('school should be saved to db', function (testDone) {
-            SchoolRepository.findSchoolByName(school.name, function (err, foundSchool) {
+            var schoolFinder = SchoolFinderFactory.create();
+            schoolFinder.findSchoolByName(school.name, function (err, foundSchool) {
                 assert.isNotNull(foundSchool);
                 testDone();
             })
@@ -61,7 +62,8 @@ describe('School saver', function () {
         });
 
         it('school should not be saved',function(testDone){
-            SchoolRepository.findSchoolByName(school.name,function(err, school){
+            var schoolFinder = SchoolFinderFactory.create();
+            schoolFinder.findSchoolByName(school.name,function(err, school){
                 assert.isNull(school);
                 testDone();
             })

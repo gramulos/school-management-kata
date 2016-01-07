@@ -23,8 +23,8 @@ var UserRegistrar = {
         var self = this;
         async.waterfall([
             function validateUserForm(next) {
-                var isFormValid = self.userFormValidator.validate(userRegistrationForm);
-                return next(null, isFormValid)
+                self.userFormValidator.validate(userRegistrationForm,next);
+
             },
 
             function generateAccount(isFormValid, next) {
@@ -47,6 +47,7 @@ var UserRegistrar = {
             },
 
             function createAccountFromParams(accountForm, next) {
+
                 if (accountForm) {
                     var form = accountForm.accountParams.form;
                     var account = AccountFactory.createFromForm({

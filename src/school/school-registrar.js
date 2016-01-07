@@ -34,9 +34,8 @@ var SchoolRegistrar = {
                 if (!isAuthorized) {
                     return next(ErrorCodes.HAS_NO_PERMISSION)
                 }
-                var isFormValid = self.schoolFormValidator.validate(schoolForm);
-                return next(null, isFormValid);
-            },
+                self.schoolFormValidator.validate(schoolForm,next);
+             },
 
             function createSchool(isFormValid, next) {
                 if (!isFormValid) {

@@ -15,85 +15,106 @@ describe('UserFormValidator test', function () {
 
     describe('#validate valid form', function () {
 
-        var validateResult;
+        var userForm;
+        var userFormValidator;
         before(function () {
 
-            var userForm = userFormBuilder.build();
+            userForm = userFormBuilder.build();
 
-            var userFormValidator =  UserFormValidatorFactory.create();
-            validateResult = userFormValidator.validate(userForm);
+            userFormValidator =  UserFormValidatorFactory.create();
+
         });
 
-        it('should return true', function () {
-            assert.isTrue(validateResult);
+        it('should return true', function (testDone) {
+            userFormValidator.validate(userForm, function (err, result) {
+                assert.isTrue(result);
+                testDone();
+            });
         });
     });
 
     describe('#validate invalid form - (when id number is incorrect)', function () {
 
-        var validateResult;
+        var userForm;
+        var userFormValidator;
         before(function () {
-            var userForm = userFormBuilder
+            userForm = userFormBuilder
                                 .withIdNumber('4s8a4f9d8e')
                                 .buildForm();
 
-            var userFormValidator =  UserFormValidatorFactory.create();
-            validateResult = userFormValidator.validate(userForm);
+            userFormValidator =  UserFormValidatorFactory.create();
+
         });
 
-        it('should return false', function () {
-            assert.isFalse(validateResult);
+        it('should return false', function (testDone) {
+            userFormValidator.validate(userForm,function(err,result){
+                assert.isNotNull(err);
+                testDone();
+            });
+
         });
     });
 
     describe('#validate invalid form - (when patronymic is incorrect)', function () {
 
-        var validateResult;
+        var userForm;
+        var userFormValidator;
         before(function () {
-            var userForm = userFormBuilder
+            userForm = userFormBuilder
                                 .withPatronymic('kamaleddin9')
                                 .buildForm();
 
-            var userFormValidator =  UserFormValidatorFactory.create();
-            validateResult = userFormValidator.validate(userForm);
+            userFormValidator =  UserFormValidatorFactory.create();
         });
 
-        it('should return false', function () {
-            assert.isFalse(validateResult);
+        it('should return false', function (testDone) {
+            userFormValidator.validate(userForm,function(err,result){
+               assert.isNotNull(err);
+                testDone();
+            });
+
         });
     });
 
     describe('#validate invalid form - (when phone is incorrect)', function () {
 
-        var validateResult;
+        var userForm;
+        var userFormValidator;
         before(function () {
-            var userForm = userFormBuilder
+            userForm = userFormBuilder
                 .withPhoneNumber('05185855295555')
                 .buildForm();
 
-            var userFormValidator =  UserFormValidatorFactory.create();
-            validateResult = userFormValidator.validate(userForm);
+            userFormValidator =  UserFormValidatorFactory.create();
+
         });
 
-        it('should return false', function () {
-            assert.isFalse(validateResult);
+        it('should return false', function (testDone) {
+            userFormValidator.validate(userForm,function(err,result){
+                assert.isNotNull(err);
+                testDone();
+            });
         });
     });
 
     describe('#validate invalid form - (when email is incorrect)', function () {
 
-        var validateResult;
+        var userForm;
+        var userFormValidator;
         before(function () {
-            var userForm = userFormBuilder
+            userForm = userFormBuilder
                 .withEmail('rufet@imagescom')
                 .buildForm();
 
-            var userFormValidator =  UserFormValidatorFactory.create();
-            validateResult = userFormValidator.validate(userForm);
+            userFormValidator =  UserFormValidatorFactory.create();
+
         });
 
-        it('should return false', function () {
-            assert.isFalse(validateResult);
+        it('should return false', function (testDone) {
+            userFormValidator.validate(userForm,function(err,result){
+                assert.isNotNull(err);
+                testDone();
+            });
         });
     });
 });

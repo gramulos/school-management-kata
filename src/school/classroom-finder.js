@@ -1,8 +1,10 @@
 'use strict';
+var ClassroomFactory = require('../school/classroom-factory');
 
-var ClassroomFactory = require('./classroom-factory');
+var ClassroomFinder = {
+    init:function(){
 
-var ClassroomRepository = {
+    },
     findClassroomByNumber:function(number,done){
         var classroomModel = ClassroomFactory.getModel();
         classroomModel.findOne({number:number},function(err,classroom){
@@ -14,8 +16,13 @@ var ClassroomRepository = {
             }
         })
     }
-
-
 };
 
-module.exports = ClassroomRepository;
+var ClassroomFinderFactory = {
+    create:function(){
+        var classroomFinder = Object.create(ClassroomFinder);
+        classroomFinder.init();
+        return classroomFinder;
+    }
+};
+module.exports = ClassroomFinderFactory;

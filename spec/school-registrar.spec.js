@@ -4,7 +4,7 @@ var assert = chai.assert;
 
 var Fixtures = require('../test/fixtures');
 var SchoolRegistrarFactory = require('../src/school/school-registrar');
-var SchoolRepository = require('../src/school/school-repository');
+var SchoolFinderFactory = require('../src/school/school-finder');
 var ErrorCodes = require('../src/infra/error-codes');
 var mongoose = require('mongoose');
 
@@ -34,7 +34,8 @@ describe('SchoolRegistrar test', function(){
         });
 
         it('should create new School in db', function(testDone){
-            SchoolRepository.findSchoolByName(schoolForm.name,function(err, school){
+            var schoolFinder = SchoolFinderFactory.create();
+            schoolFinder.findSchoolByName(schoolForm.name,function(err, school){
                 assert.isNotNull(school);
                 testDone();
             })
@@ -62,7 +63,8 @@ describe('SchoolRegistrar test', function(){
         });
 
         it('should not save school to the db', function(testDone){
-            SchoolRepository.findSchoolByName(schoolForm.name, function (err, school) {
+            var schoolFinder = SchoolFinderFactory.create();
+            schoolFinder.findSchoolByName(schoolForm.name, function (err, school) {
                 assert.isNull(school);
                 testDone();
             })

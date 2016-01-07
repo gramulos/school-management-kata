@@ -25,10 +25,19 @@ var ErrorCodes = {
     USER_NOT_SAVED: ApplicationErrorFactory.create(113, 'User not saved'),
     STUDENT_IS_NOT_DEFINED: ApplicationErrorFactory.create(114, 'Student is null or empty'),
     INVALID_TOKEN:ApplicationErrorFactory.create(115,'Token is invalid'),
-    INVALID_PASSWORD: ApplicationErrorFactory.create(115, 'Password is not valid'),
-    EMPLOYEE_IS_NOT_DEFINED: ApplicationErrorFactory.create(116, 'Employee is null or empty'),
-    SCHOOL_IS_NOT_DEFINED: ApplicationErrorFactory.create(117,'School is null or empty'),
-    CLASSROOM_IS_NOT_DEFINED: ApplicationErrorFactory.create(118,'Classroom is null or empty')
+    INVALID_PASSWORD: ApplicationErrorFactory.create(116, 'Password is not valid'),
+    EMPLOYEE_IS_NOT_DEFINED: ApplicationErrorFactory.create(117, 'Employee is null or empty'),
+    SCHOOL_IS_NOT_DEFINED: ApplicationErrorFactory.create(118,'School is null or empty'),
+    CLASSROOM_IS_NOT_DEFINED: ApplicationErrorFactory.create(119,'Classroom is null or empty'),
+    SCHOOL_IS_ALREADY_EXISTING: ApplicationErrorFactory.create(120,'School exists in the db'),
+    NAME_IS_NOT_VALID: ApplicationErrorFactory.create(121,'Name is not valid'),
+    EMAIL_IS_NOT_VALID: ApplicationErrorFactory.create(122,'Email is not valid'),
+    PHONE_NUMBER_IS_NOT_VALID: ApplicationErrorFactory.create(123,'Phone number is not valid'),
+    LAST_NAME_IS_NOT_VALID:  ApplicationErrorFactory.create(124,'Last name is not valid'),
+    PATRONYMIC_IS_NOT_VALID:  ApplicationErrorFactory.create(125,'Patronymic is not valid'),
+    ID_NUMBER_IS_NOT_VALID: ApplicationErrorFactory.create(126,'Id number is not valid'),
+    CLASSROOM_NUMBER_IS_NOT_DEFINED:ApplicationErrorFactory.create(127,'Classroom is not valid'),
+    CLASSROOM_IS_ALREADY_EXISTING:ApplicationErrorFactory.create(128,'Classroom exists in the db')
 };
 
 module.exports = ErrorCodes;

@@ -13,7 +13,8 @@ require('./test-helper');
 var StudentRegistrarFactory = require('../src/school/student-registrar');
 var EmailSenderFactory = require('../src/infra/email-sender');
 var UserFinderFactory = require('../src/users/user-finder');
-var SchoolRepository = require('../src/school/student-repository');
+//var SchoolRepository = require('../src/school/student-repository');
+var StudentFinderFactory = require('../src/school/student-finder');
 var UserFactory = require('../src/users/user-factory');
 
 var ErrorCodes = require('../src/infra/error-codes');
@@ -79,7 +80,6 @@ describe('StudentRegistrar test', function () {
             var UserFinder = UserFinderFactory.create();
             UserFinder.findByIdNumber(registrationForm.userForm.idNumber, function (err, user) {
                 actualUserId = user.id;
-
                 var expected = userFormBuilder.aUserForm().build();
                 delete expected.id;
 
@@ -91,7 +91,8 @@ describe('StudentRegistrar test', function () {
         });
 
         it('student should be created in db', function (testDone) {
-            SchoolRepository.findStudentByUserId(actualUserId, function (err, student) {
+            var studentFinder = StudentFinderFactory.create();
+            studentFinder.findStudentByUserId(actualUserId, function (err, student) {
                 assert.isNotNull(student);
                 testDone();
             });

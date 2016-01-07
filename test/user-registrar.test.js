@@ -18,7 +18,7 @@ var UsernamePolicyValidatorFactory = require('../src/users/username-policy-valid
 var ErrorCode = require('../src/infra/error-codes');
 
 describe('testing user registrar', function () {
-    var userFormBuilder = Fixtures.user
+    var userFormBuilder = Fixtures.user;
 
     describe('#generate user account with correct input', function () {
 
@@ -152,7 +152,7 @@ describe('testing user registrar', function () {
             userRegistrar.register(Role.ADMIN, input.userRegistrationForm, function (err, user) {
                 assert.isDefined(err);
                 assert.isUndefined(user);
-                assert.equal(err,ErrorCode.INVALID_USER_FORM);
+                assert.equal(err,ErrorCode.ID_NUMBER_IS_NOT_VALID);
                 beforeDone();
             });
 

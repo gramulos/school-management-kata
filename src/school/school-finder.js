@@ -2,7 +2,10 @@
 
 var SchoolFactory = require('./school-factory');
 
-var SchoolRepository = {
+var SchoolFinder = {
+    init:function(){
+
+    },
     findSchoolByName: function(schoolName, done){
         var SchoolModel = SchoolFactory.getModel();
         SchoolModel.findOne({name:schoolName}, function(err, school){
@@ -14,4 +17,13 @@ var SchoolRepository = {
     }
 };
 
-module.exports = Object.freeze(SchoolRepository);
+var SchoolFinderFactory = {
+    create:function(){
+        var schoolFinder = Object.create(SchoolFinder);
+        schoolFinder.init();
+        return schoolFinder;
+
+    }
+};
+
+module.exports = SchoolFinderFactory;

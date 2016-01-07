@@ -24,7 +24,6 @@ function clearDB(done) {
 
 describe('Login manager test', function () {
 
-
     var dateProviderStub;
     var dateProviderFactorySpy;
     dateProviderStub = DateProviderFactory.create();
@@ -94,11 +93,11 @@ describe('Login manager test', function () {
             });
         });
 
-
-
-
+        after(function (afterDone) {
+            dateProviderFactorySpy.restore();
+            clearDB(afterDone);
+        });
     });
-
 
     describe('#login as student - invalid username', function () {
 
@@ -156,10 +155,13 @@ describe('Login manager test', function () {
             assert.equal(loginError, expectedError);
         });
 
+        after(function (afterDone) {
+            dateProviderFactorySpy.restore();
+            clearDB(afterDone);
+        });
     });
 
-
-    describe.skip('#login as student - invalid password', function () {
+    describe('#login as student - invalid password', function () {
 
         var loginError;
         var studentRegistrar;
@@ -214,11 +216,9 @@ describe('Login manager test', function () {
             assert.equal(loginError, ErrorCodes.LOGIN_FAILED);
         });
 
+        after(function (afterDone) {
+            dateProviderFactorySpy.restore();
+            clearDB(afterDone);
+        });
     });
-
-    after(function (afterDone) {
-        dateProviderFactorySpy.restore();
-        clearDB(afterDone);
-    });
-
 });

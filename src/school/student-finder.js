@@ -18,6 +18,15 @@ var StudentFinder = {
                 return done(null, foundStudent);
             }
         });
+    },
+    findStudentByUserId: function (userId, done) {
+        var StudentModel = StudentFactory.getModel();
+        StudentModel.findOne({userId:userId},function(err,foundStudent){
+            if(err){
+                return done(err);
+            }
+            return done(null,foundStudent);
+        })
     }
 };
 

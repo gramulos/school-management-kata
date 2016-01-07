@@ -8,7 +8,7 @@ require('../test-helper');
 var Fixtures = require('../../test/fixtures');
 var ClassroomSaver = require('../../src/school/classroom-saver');
 var ClassroomFactory = require('../../src/school/classroom-factory');
-var ClassroomRepository = require('../../src/school/classroom-repository');
+var ClassroomFinderFactory = require('../../src/school/classroom-finder');
 
 var ClassroomModel = ClassroomFactory.getModel();
 
@@ -35,7 +35,8 @@ describe('Classroom saver', function(){
         });
 
         it('classroom should be saved to db',function(testdone){
-            ClassroomRepository.findClassroomByNumber(classroom.number,function(err,classroom){
+            var classroomFinder = ClassroomFinderFactory.create();
+            classroomFinder.findClassroomByNumber(classroom.number,function(err,classroom){
                 assert.isNotNull(classroom);
                 testdone();
             })
