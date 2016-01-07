@@ -4,7 +4,7 @@ var assert = chai.assert;
 var sinon = require('sinon');
 
 var UserRegistrarFactory = require('../src/users/user-registrar');
-
+var UserFinderFactory = require('../src/users/user-finder');
 var AccountParamsGeneratorFactory = require('../src/users/account-params-generator');
 var UserFactory = require('../src/users/user-factory');
 var UserSaverFactory = require('../src/users/user-saver');
@@ -119,7 +119,7 @@ describe('testing user registrar', function () {
             accountFactorySpy.restore();
             userCreatorSpy.restore();
         })
-    })
+    });
 
     describe('#generate user account with incorrect input', function () {
 
@@ -140,8 +140,11 @@ describe('testing user registrar', function () {
             });
 
             accountParamsGeneratorSpy = sinon.spy(accountParamsGenerator, 'generate');
-
-            var userFormValidator = UserFormValidatorFactory.create();
+            var userFinder = UserFinderFactory.create();
+            sinon.stub(userFinder,'findByIdNumber',function(idNumber,done){
+                done(null,null);
+            });
+            var userFormValidator = UserFormValidatorFactory.create({userFinder:userFinder});
             userFormValidatorSpy = sinon.spy(userFormValidator, 'validate');
 
             userRegistrar = UserRegistrarFactory.create({
@@ -152,7 +155,7 @@ describe('testing user registrar', function () {
             userRegistrar.register(Role.ADMIN, input.userRegistrationForm, function (err, user) {
                 assert.isDefined(err);
                 assert.isUndefined(user);
-                assert.equal(err,ErrorCode.ID_NUMBER_IS_NOT_VALID);
+                assert.equal(err,ErrorCode.INVALID_USER_FORM);
                 beforeDone();
             });
 

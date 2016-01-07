@@ -101,11 +101,8 @@ describe('GradeRegistrationFormValidator test', function () {
 
         it('should return false', function(testDone) {
 
-            console.log('121212121');
-
             var gradeForm = gradeBuilder.aGradeForm().buildForm();
             gradeRegistrationForm.validate(gradeForm, function(err, isValid){
-                console.log('66666', isValid);
                 assert.isFalse(isValid);
 
                 testDone();

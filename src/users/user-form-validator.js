@@ -1,7 +1,7 @@
 'use strict';
 //var UserFormParamsValidator = require('../users/user-form-params-validator');
 
-var  REGEX_DIGIT = /\d/g;
+var REGEX_DIGIT = /\d/g;
 var REGEX_SYMBOL = /\W+/g;
 var REGEX_EMAIL = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 var REGEX_NOT_DIGIT = /\D/g;
@@ -13,63 +13,85 @@ var UserFormValidator = {
 
     init: function (args) {
         args = args || {};
+        this.userFinder = args.userFinder || UserFinderFactory.create();
     },
 
-    validate: function (userForm,done) {
+    validate: function (userForm, done) {
         var self = this;
-        async.waterfall([
-            function validateName(next){
-               var isNameValid = self.validateName(userForm.firstName);
-               return next(null,isNameValid);
-            },
-            function validateLastName(isNameValid,next){
-              if(!isNameValid){
-                  return next(ErrorCodes.NAME_IS_NOT_VALID);
-              }
-              var isLastNameValid = self.validateName(userForm.lastName);
-              return next(null,isLastNameValid);
-            },
-            function validatePatronymic(isLastNameValid,next){
-                if(!isLastNameValid){
-                    return next(ErrorCodes.LAST_NAME_IS_NOT_VALID);
+        async.parallel([
+            function validateName(next) {
+                var isValidName = self.validateName(userForm.firstName);
+                if (!isValidName) {
+                    return next(null,ErrorCodes.NAME_IS_NOT_VALID);
                 }
-                var isPatronymicValid = self.validateName(userForm.patronymic);
-                return next(null,isPatronymicValid);
-            },
-            function validateIdNumber(isPatronymicValid,next){
+                else {
+                    return next();
+                }
 
+            },
+            function validateLastName(next) {
+                var isLastNameValid = self.validateName(userForm.lastName);
+                if (!isLastNameValid) {
+                    return next(null,ErrorCodes.LAST_NAME_IS_NOT_VALID)
+                }
+                else{
+                    return next();
+                }
+            },
+            function validatePatronymic(next) {
+                var isPatronymicValid = self.validateName(userForm.patronymic);
                 if(!isPatronymicValid){
-                    return next(ErrorCodes.PATRONYMIC_IS_NOT_VALID);
+                    return next(null,ErrorCodes.PATRONYMIC_IS_NOT_VALID)
                 }
+                else{
+                    return next();
+                }
+            },
+            function validateIdNumber(next) {
                 var isIdNumberValid = self.validateIdNumber(userForm.idNumber);
-                return next(null,isIdNumberValid);
-            },
-            function validateEmail(isIdNumberValid,next){
                 if(!isIdNumberValid){
-                    return next(ErrorCodes.ID_NUMBER_IS_NOT_VALID);
+                    return next(null,ErrorCodes.ID_NUMBER_IS_NOT_VALID);
                 }
+                self.validateUserExistenceInDb(userForm.idNumber, function(err,isUserExistInDb){
+                    if(isUserExistInDb){
+                        return next(null,ErrorCodes.USER_IS_ALREADY_EXISTING);
+                    }
+                    else{
+                        return next()
+                    }
+                });
+
+            },
+            function validateEmail(next) {
                 var isEmailValid = self.validateEmail(userForm.email);
-                return next(null,isEmailValid);
-            },
-            function validatePhoneNumber(isEmailValid,next){
                 if(!isEmailValid){
-                    return next(ErrorCodes.EMAIL_IS_NOT_VALID);
+                    return next(null,ErrorCodes.EMAIL_IS_NOT_VALID)
                 }
-                var isPhoneValid = self.validatePhoneNumber(userForm.phone);
-                return next(null,isPhoneValid);
+                else{
+                    return next();
+                }
             },
-            function validateUserExistence(isPhoneValid,next){
+            function validatePhoneNumber(next) {
+                var isPhoneValid = self.validatePhoneNumber(userForm.phone);
                 if(!isPhoneValid){
-                    return next(ErrorCodes.PHONE_NUMBER_IS_NOT_VALID);
+                    return next(null,ErrorCodes.PHONE_NUMBER_IS_NOT_VALID)
                 }
-                self.validateUserExistenceInDb(userForm.idNumber,next);
+                else{
+                    return next();
+                }
             }
-        ], function(err,result){
-            if(err){
+        ], function (err, result) {
+            var validationErrors = result.filter(function(item){
+                return item !== undefined;
+            });
+            if (err) {
                 return done(err);
             }
-            else{
-                return done(null,result);
+            else if(validationErrors.length > 0){
+                return done(null,{success:false, validationResults:validationErrors});
+            }
+            else {
+                return done(null, {success:true});
             }
         });
 
@@ -98,25 +120,24 @@ var UserFormValidator = {
         }
     },
     validatePhoneNumber: function (phoneNumber) {
-        if(phoneNumber.length !== 10 || phoneNumber.match(REGEX_NOT_DIGIT)){
+        if (phoneNumber.length !== 10 || phoneNumber.match(REGEX_NOT_DIGIT)) {
             return false;
-        }else{
+        } else {
             return true;
         }
     },
 
-    validateUserExistenceInDb:function(idNumber,done){
-        var userFinder = UserFinderFactory.create();
-        userFinder.findByIdNumber(idNumber,function(err,result){
-            if(err){
+    validateUserExistenceInDb: function (idNumber, done) {
+        this.userFinder.findByIdNumber(idNumber, function (err, result) {
+            if (err) {
                 return done(err);
             }
-            else{
-                if(result !== null){
-                    return done(null,false);
+            else {
+                if (result !== null) {
+                    return done(null, true);
                 }
-                else{
-                    return done(null,true);
+                else {
+                    return done(null, false);
                 }
             }
         })

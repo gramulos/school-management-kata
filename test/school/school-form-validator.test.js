@@ -15,13 +15,19 @@ describe('SchoolFormValidator test', function () {
     var schoolRegistrationFormValidator;
 
     describe('#validate with valid information', function () {
+
         before(function () {
-            schoolRegistrationFormValidator = SchoolFormValidatorFactory.create();
+            var schoolFinder = SchoolFinderFactory.create();
+            sinon.stub(schoolFinder,'findSchoolByName',function(name,done){
+                done(null,null);
+            });
+            schoolRegistrationFormValidator = SchoolFormValidatorFactory.create({schoolFinder:schoolFinder});
             schoolRegistrationForm = schoolBuilder.aSchoolForm().buildForm();
         });
-        it('should return true', function () {
+        it('should return true', function (testDone) {
             schoolRegistrationFormValidator.validate(schoolRegistrationForm,function(err,result){
-                assert.isTrue(result);
+                assert.isTrue(result.success);
+                testDone();
             });
 
         })
@@ -29,13 +35,18 @@ describe('SchoolFormValidator test', function () {
 
     describe('#validate with invalid information- name missing', function () {
         before(function () {
-            schoolRegistrationFormValidator = SchoolFormValidatorFactory.create();
+            var schoolFinder = SchoolFinderFactory.create();
+            sinon.stub(schoolFinder,"findSchoolByName",function(name,done){
+                done(null,null);
+            });
+            schoolRegistrationFormValidator = SchoolFormValidatorFactory.create({schoolFinder:schoolFinder});
             schoolRegistrationForm = schoolBuilder.aSchoolForm().withName('').buildForm();
         });
 
         it('should return false', function () {
             schoolRegistrationFormValidator.validate(schoolRegistrationForm,function(err,result){
-                assert.isNotNull(err);
+                assert.isFalse(result.success);
+                assert.isNotNull(result.validationResults);
             });
 
         })
@@ -43,33 +54,40 @@ describe('SchoolFormValidator test', function () {
     //
     describe('#validate with invalid information- email missing', function () {
         before(function () {
-            schoolRegistrationFormValidator = SchoolFormValidatorFactory.create();
+            var schoolFinder = SchoolFinderFactory.create();
+            sinon.stub(schoolFinder,"findSchoolByName",function(name,done){
+                done(null,null);
+            });
+            schoolRegistrationFormValidator = SchoolFormValidatorFactory.create({schoolFinder:schoolFinder});
             schoolRegistrationForm = schoolBuilder.aSchoolForm().withEmail('').buildForm();
         });
 
         it('should return false', function () {
             schoolRegistrationFormValidator.validate(schoolRegistrationForm,function(err,result){
-                assert.isNotNull(err);
+                assert.isFalse(result.success);
+                assert.isNotNull(result.validationResults);
             });
 
         })
     });
 
-    describe.skip('#validate with valid school information although already in db', function () {
+    describe('#validate with valid school information although already in db', function () {
         before(function () {
-            schoolRegistrationFormValidator = SchoolFormValidatorFactory.create();
+            var schoolFinder = SchoolFinderFactory.create();
+
+            sinon.stub(schoolFinder,"findSchoolByName",function(name,done){
+                done(null,name);
+            });
+
+            schoolRegistrationFormValidator = SchoolFormValidatorFactory.create({schoolFinder:schoolFinder});
             schoolRegistrationForm = schoolBuilder.aSchoolForm().buildForm();
 
-            var school = {id:465};
-            var schoolFinder = SchoolFinderFactory.create();
-            sinon.stub(schoolFinder, 'findSchoolByName', function (err, done) {
-                done(null, school);
-            });
 
         });
         it('should return false', function () {
             schoolRegistrationFormValidator.validate(schoolRegistrationForm,function(err,result){
-                assert.isFalse(result);
+                assert.isFalse(result.success);
+                assert.isNotNull(result.validationResults);
             });
         })
     })

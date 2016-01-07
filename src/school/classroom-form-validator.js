@@ -6,63 +6,78 @@ var REGEX_EMAIL = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@(
 var REGEX_NOT_DIGIT = /\D/g;
 var ErrorCodes = require('../infra/error-codes');
 var ClassroomFinderFactory = require('../school/classroom-finder');
-
 var async = require('async');
 
 var ClassroomFormValidator = {
-    init: function () {
-
+    init: function (args) {
+        args = args || {};
+        this.classroomFinder = args.classroomFinder || ClassroomFinderFactory.create();
     },
-    validate: function (classRoomForm,done) {
+    validate: function (classRoomForm, done) {
         var self = this;
-        async.waterfall([
-            function validateNumber(next){
+        async.parallel([
+
+            function validateNumber(next) {
                 var isValidNumber = self.validateNumber(classRoomForm.number);
-                return next(null,isValidNumber);
-            },
-            function validateClassroomExistanceInDb(isValidNumber,next){
-                if(!isValidNumber){
-                    return next(ErrorCodes.CLASSROOM_NUMBER_IS_NOT_DEFINED);
+                if (!isValidNumber) {
+                    return next(null, ErrorCodes.CLASSROOM_NUMBER_IS_NOT_DEFINED);
                 }
-                self.validateClassroomExistanceInDb(classRoomForm.number,next);
+                self.validateClassroomExistanceInDb(classRoomForm.number, function (err, isClassroomExists) {
+                    if (isClassroomExists) {
+                        return next(null, ErrorCodes.CLASSROOM_IS_ALREADY_EXISTING)
+                    }
+                    else {
+                        return next();
+                    }
+                });
             },
-            function validateDescription(isExistInDb,next){
-                if(!isExistInDb){
-                    return next(ErrorCodes.CLASSROOM_IS_ALREADY_EXISTING);
-                }
+
+            function validateDescription(next) {
+
                 var isValidDescription = self.validateDescription(classRoomForm.description);
-                return next(null,isValidDescription);
+                if (isValidDescription) {
+                    return next();
+                }
+                else {
+                    return next(null, ErrorCodes.DESCRIPTION_LENGTH_IS_INCORRECT);
+                }
             }
-        ],function(err,result){
-            if(err){
+        ], function (err, result) {
+
+            var validationErrors = result.filter(function (item) {
+                return item !== undefined;
+            });
+
+            if (err) {
                 return done(err);
-            }else{
-                return done(null,result);
+            } else if (validationErrors.length > 0) {
+                return done(null, {success: false, validationResults: validationErrors});
+            } else {
+                return done(null, {success: true});
             }
         });
     },
     validateNumber: function (roomNumber) {
-        if(!roomNumber.match(REGEX_DIGIT)) {
+        if (!roomNumber.match(REGEX_DIGIT)) {
             return false;
         }
         return true;
     },
     validateDescription: function (description) {
-        if(description.length === 0 || description.length > 40) {
+        if (description.length === 0 || description.length > 40) {
             return false;
         }
         return true;
     },
-    validateClassroomExistanceInDb:function(number,done){
-        var classroomFinder = ClassroomFinderFactory.create();
-        classroomFinder.findClassroomByNumber(number,function(err,isExist){
-            if(err){
+    validateClassroomExistanceInDb: function (number, done) {
+        this.classroomFinder.findClassroomByNumber(number, function (err, isExist) {
+            if (err) {
                 done(err);
-            }else{
-                if(isExist !== null){
-                    return done(null,false);
-                }else{
-                    return done(null,true);
+            } else {
+                if (isExist !== null) {
+                    return done(null, true);
+                } else {
+                    return done(null, false);
                 }
             }
         })
@@ -70,9 +85,9 @@ var ClassroomFormValidator = {
 };
 
 var ClassroomFormValidatorFactory = {
-    create: function () {
+    create: function (args) {
         var classroomFormValidator = Object.create(ClassroomFormValidator);
-        classroomFormValidator.init();
+        classroomFormValidator.init(args);
         return classroomFormValidator;
     }
 };

@@ -24,11 +24,11 @@ var UserRegistrar = {
         async.waterfall([
             function validateUserForm(next) {
                 self.userFormValidator.validate(userRegistrationForm,next);
-
             },
 
             function generateAccount(isFormValid, next) {
-                if (!isFormValid) {
+
+                if (!isFormValid.success) {
                     return next(ErrorCodes.INVALID_USER_FORM);
                 }
 
@@ -38,7 +38,6 @@ var UserRegistrar = {
             function validateAccountForm(accountParams, next) {
                 self.accountFormValidator.validate(accountParams, function (err, result) {
                     if (err) {
-
                     }
                     else {
                         return next(null, {isAccountValid: result, accountParams: accountParams});
@@ -69,6 +68,7 @@ var UserRegistrar = {
             },
 
             function saveUser(createdUser, next) {
+
                 self.userSaver.save(createdUser, next);
             }
         ], function (err, isSaved) {
@@ -76,6 +76,7 @@ var UserRegistrar = {
                 return done(err);
             }
             else {
+
                 return done(null, isSaved);
             }
         });

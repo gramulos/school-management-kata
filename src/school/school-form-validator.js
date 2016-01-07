@@ -8,50 +8,72 @@ var SchoolFinderFactory = require('../school/school-finder');
 var ErrorCodes = require('../infra/error-codes');
 var async = require('async');
 var SchoolFormValidator = {
-    init: function () {
+    init: function (args) {
+        args = args || {};
+        this.schoolFinder = args.schoolFinder || SchoolFinderFactory.create()
 
     },
     validate: function (schoolForm, done) {
 
         var self = this;
-        async.waterfall([
+        async.parallel([
             function validateName(next) {
-                var isNameValid = self.validateName(schoolForm.name);
-                return next(null, isNameValid);
-            },
-            function validateSchoolExistence(isNameValid,next) {
-                if (!isNameValid) {
-                    return next(ErrorCodes.NAME_IS_NOT_VALID);
+                var isValidName = self.validateName(schoolForm.name);
+                if(!isValidName){
+                    return next(null, ErrorCodes.NAME_IS_NOT_VALID);
                 }
-                self.validateSchoolExistenceInDb(schoolForm.name, next);
+                self.validateSchoolExistenceInDb(schoolForm.name, function(err,isSchoolExistInDb){
+                    if(isSchoolExistInDb){
+                        return next(null,ErrorCodes.SCHOOL_IS_ALREADY_EXISTING);
+                    }
+                    else{
+                        return next();
+                    }
+                });
             },
-            function validateEmail(isValid, next) {
-                if (!isValid) {
-                    return next(ErrorCodes.SCHOOL_IS_ALREADY_EXISTING);
+
+            function validateEmail(next) {
+
+                var isValidEmail = self.validateEmail(schoolForm.email);
+                if(isValidEmail){
+                    return next();
                 }
-                var isEmailValid = self.validateEmail(schoolForm.email);
-                return next(null, isEmailValid);
+                else{
+                    return next(null,ErrorCodes.EMAIL_IS_NOT_VALID);
+                }
             },
-            function validatePhoneNumber(isEmailValid, next) {
-                if (!isEmailValid) {
-                    return next(ErrorCodes.EMAIL_IS_NOT_VALID);
+            function validatePhoneNumber(next) {
+
+                var isValidPhone = self.validatePhoneNumber(schoolForm.phone);
+                if(isValidPhone){
+                    return next();
                 }
-                var isPhoneValid = self.validatePhoneNumber(schoolForm.phone);
-                return next(null, isPhoneValid);
+                else{
+                    return next(null, ErrorCodes.PHONE_NUMBER_IS_NOT_VALID);
+                }
             },
-            function validateAddress(isPhoneValid, next) {
-                if (!isPhoneValid) {
-                    return next(ErrorCodes.PHONE_NUMBER_IS_NOT_VALID);
+            function validateAddress(next) {
+                var isValidAddress = self.validateAddress(schoolForm.address);
+                if(isValidAddress){
+                    return next()
                 }
-                var isAddressValid = self.validateAddress(schoolForm.address);
-                return next(null, isAddressValid);
+                else{
+                    return next(null,ErrorCodes.ADDRESS_IS_NOT_VALID);
+                }
             }
         ], function (err, result) {
+
+            var validationErrors = result.filter(function(item){
+                return item !== undefined;
+            });
             if (err) {
                 return done(err);
             }
+            else if(validationErrors.length > 0){
+                return done(null,{success:false, validationResults:validationErrors});
+            }
             else {
-                return done(null, result);
+                return done(null, {success:true});
             }
         });
     },
@@ -85,15 +107,14 @@ var SchoolFormValidator = {
         }
     },
     validateSchoolExistenceInDb: function (name, done) {
-        var schoolFinder = SchoolFinderFactory.create();
-        schoolFinder.findSchoolByName(name, function (err, result) {
+        this.schoolFinder.findSchoolByName(name, function (err, result) {
             if (err) {
                 done(err);
             } else {
                 if (result !== null) {
-                    return done(null, false);
-                } else {
                     return done(null, true);
+                } else {
+                    return done(null, false);
                 }
             }
         })
@@ -101,9 +122,9 @@ var SchoolFormValidator = {
 };
 
 var SchoolFormValidatorFactory = {
-    create: function () {
+    create: function (args) {
         var schoolFormValidator = Object.create(SchoolFormValidator);
-        schoolFormValidator.init();
+        schoolFormValidator.init(args);
         return schoolFormValidator;
     }
 };

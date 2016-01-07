@@ -308,7 +308,10 @@ var ClassroomBuilder = {
         this.builder.number = number;
         return this;
     },
-
+    withDescription:function(description){
+        this.builder.description = description;
+        return this;
+    },
     buildForm:function(){
         return this.builder;
     },

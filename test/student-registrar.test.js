@@ -42,7 +42,7 @@ describe('StudentRegistrar test', function () {
         before(function (beforeDone) {
             studentForm = StudentRegistrationFormValidatorFactory.create();
             studentRegistrationForm = studentBuilder.aStudent().buildForm();
-        var userForm;
+            var userForm;
             userForm = UserFormBuilder.aUserForm().buildForm();
 
             var tokenValidator = TokenValidatorFactory.create();

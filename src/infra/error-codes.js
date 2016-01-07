@@ -39,7 +39,10 @@ var ErrorCodes = {
     CLASSROOM_NUMBER_IS_NOT_DEFINED:ApplicationErrorFactory.create(127,'Classroom is not valid'),
     CLASSROOM_IS_ALREADY_EXISTING:ApplicationErrorFactory.create(128,'Classroom exists in the db'),
     GRADE_IS_NOT_DEFINED: ApplicationErrorFactory.create(129, 'Grade is null or empty'),
-    GRADE_IS_ALREADY_EXISTS: ApplicationErrorFactory.create(130, ' Grade is already exists')
+    GRADE_IS_ALREADY_EXISTS: ApplicationErrorFactory.create(130, ' Grade is already exists'),
+    DESCRIPTION_LENGTH_IS_INCORRECT: ApplicationErrorFactory.create(131,'Description length is incorrect'),
+    ADDRESS_IS_NOT_VALID: ApplicationErrorFactory.create(132,'Address is not valid'),
+    USER_IS_ALREADY_EXISTING:ApplicationErrorFactory.create(133,'User exists in the db')
 };
 
 module.exports = ErrorCodes;
