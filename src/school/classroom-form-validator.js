@@ -1,9 +1,6 @@
 'use strict';
 
 var REGEX_DIGIT = /\d/g;
-var REGEX_SYMBOL = /\W+/g;
-var REGEX_EMAIL = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-var REGEX_NOT_DIGIT = /\D/g;
 var ErrorCodes = require('../infra/error-codes');
 var ClassroomFinderFactory = require('../school/classroom-finder');
 var async = require('async');

@@ -6,7 +6,7 @@ var EmployeeRegistrationFormValidator = {
 
     },
 
-    validate: function (form) {
+    validate: function (form, done) {
         return this.validateRole(form.role) && this.validateSalary(form.salary) ? true : false;
     },
 

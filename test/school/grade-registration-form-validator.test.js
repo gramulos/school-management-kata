@@ -3,14 +3,14 @@
 var chai = require('chai');
 chai.use(require('chai-shallow-deep-equal'));
 var assert = chai.assert;
-
+var sinon = require('sinon');
 require('../test-helper');
 
 var GradeRegistrationFormValidatorFactory = require('../../src/school/grade-registration-form-validator');
 var GradeSaverFactory = require('../../src/school/grade-saver');
 var GradeFactory = require('../../src/school/grade-factory');
 var Fixtures = require('../fixtures');
-
+var GradeFinderFactory  = require('../../src/school/grade-finder');
 var GradeModel = GradeFactory.getModel();
 
 describe('GradeRegistrationFormValidator test', function () {
@@ -23,14 +23,18 @@ describe('GradeRegistrationFormValidator test', function () {
         var gradeRegistrationForm;
 
         before(function () {
-            gradeRegistrationForm = GradeRegistrationFormValidatorFactory.create();
+            var gradeFinder = GradeFinderFactory.create();
+            sinon.stub(gradeFinder,"findByNumber",function(name,done){
+                done(null,null);
+            });
+
+            gradeRegistrationForm = GradeRegistrationFormValidatorFactory.create({gradeFinder:gradeFinder});
             gradeForm = gradeBuilder.aGradeForm().buildForm();
         });
 
         it('should return true', function (testDone) {
-            gradeRegistrationForm.validate(gradeForm, function(err, isValid) {
-                assert.isTrue(isValid);
-
+            gradeRegistrationForm.validate(gradeForm, function(err, gradeResult) {
+                assert.isTrue(gradeResult.success);
                 testDone();
             });
         });
@@ -41,15 +45,19 @@ describe('GradeRegistrationFormValidator test', function () {
         var gradeRegistrationForm;
 
         before(function () {
-            gradeRegistrationForm = GradeRegistrationFormValidatorFactory.create();
+            var gradeFinder = GradeFinderFactory.create();
+            sinon.stub(gradeFinder,"findByNumber",function(name,done){
+                done(null,null);
+            });
+            gradeRegistrationForm = GradeRegistrationFormValidatorFactory.create({gradeFinder:gradeFinder});
             gradeForm = gradeBuilder.aGradeForm().withNumber('').buildForm();
         });
 
         it('should return false - when class number is empty', function (testDone) {
 
-            gradeRegistrationForm.validate(gradeForm, function(err, isValid) {
-                assert.isFalse(isValid);
-
+            gradeRegistrationForm.validate(gradeForm, function(err, gradeResult) {
+                assert.isFalse(gradeResult.success);
+                assert.isNotNull(gradeResult.validationResults);
                 testDone();
             });
         });
@@ -57,9 +65,9 @@ describe('GradeRegistrationFormValidator test', function () {
         it('should return false - when class number contains symbols', function (testDone) {
 
             gradeForm = gradeBuilder.aGradeForm().withNumber('2#').buildForm();
-            gradeRegistrationForm.validate(gradeForm, function (err, isValid) {
-                assert.isFalse(isValid);
-
+            gradeRegistrationForm.validate(gradeForm, function (err, gradeResult) {
+                assert.isFalse(gradeResult.success);
+                assert.isNotNull(gradeResult.validationResults);
                 testDone();
             });
         });
@@ -67,9 +75,9 @@ describe('GradeRegistrationFormValidator test', function () {
         it('should return false - when class number contains letters', function (testDone) {
 
             gradeForm = gradeBuilder.aGradeForm().withNumber('2eE').buildForm();
-            gradeRegistrationForm.validate(gradeForm, function (err, isValid) {
-                assert.isFalse(isValid);
-
+            gradeRegistrationForm.validate(gradeForm, function (err, gradeResult) {
+                assert.isFalse(gradeResult.success);
+                assert.isNotNull(gradeResult.validationResults);
                 testDone();
             });
         });
@@ -80,31 +88,23 @@ describe('GradeRegistrationFormValidator test', function () {
         var grade;
         var gradeRegistrationForm;
 
-        before(function (beforeDone) {
+        before(function () {
+
+            var gradeFinder = GradeFinderFactory.create();
+            sinon.stub(gradeFinder,"findByNumber",function(name,done){
+                done(null,name);
+            });
 
             grade = gradeBuilder.aGradeForm().build();
-            gradeRegistrationForm = GradeRegistrationFormValidatorFactory.create();
-            var gradeSaver = GradeSaverFactory.create();
-
-            gradeSaver.save(grade, function(err, savedGrade){
-                assert.isNotNull(savedGrade);
-
-                beforeDone();
-            })
-        });
-
-        after(function(afterDone){
-            GradeModel.remove({}, function(err){
-                afterDone();
-            });
+            gradeRegistrationForm = GradeRegistrationFormValidatorFactory.create({gradeFinder:gradeFinder});
         });
 
         it('should return false', function(testDone) {
 
             var gradeForm = gradeBuilder.aGradeForm().buildForm();
-            gradeRegistrationForm.validate(gradeForm, function(err, isValid){
-                assert.isFalse(isValid);
-
+            gradeRegistrationForm.validate(gradeForm, function(err, gradeResult){
+                assert.isFalse(gradeResult.success);
+                assert.isNotNull(gradeResult.validationResults);
                 testDone();
             });
         });

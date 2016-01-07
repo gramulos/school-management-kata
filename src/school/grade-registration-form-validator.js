@@ -6,58 +6,60 @@ var GradeFinder = require('./grade-finder');
 var ErrorCodes = require('../infra/error-codes');
 
 
-
 var GradeRegistrationFormValidator = {
 
-    init: function(args) {
+    init: function (args) {
         args = args || {};
 
         this.gradeFinder = args.gradeFinder || GradeFinder.create();
 
     },
-    validate: function(args, done){
+    validate: function (args, done) {
 
         var self = this;
         var number = args.number;
 
-        async.waterfall([
-            function validateNumber(next){
-
+        async.parallel([
+            function validateNumber(next) {
                 var isValid = self.validateNumber(number);
-
-                return next(null, isValid);
-            },
-
-            function findByNumber(isValid, next){
-
-                if(isValid){
-
-                    self.gradeFinder.findByNumber(number, function(err,result){
-                        if(!result){
-                            return next(null, true);
-                        } else {
-                            return next(null, false)
-                        }
-                    });
-
+                if (!isValid) {
+                    return next(null, ErrorCodes.GRADE_NUMBER_IS_NOT_VALID);
                 }
-                else{
-                    return next(null, false);
-                }
+                self.validateGradeNumberExistanceInDb(number,function(err,isGradeExistInDb){
+                    if(isGradeExistInDb){
+                        return next(null,ErrorCodes.GRADE_IS_ALREADY_EXISTS);
+                    }else{
+                        return next();
+                    }
+                });
             }
-        ], function(err, result){
-            if(err){
+        ],function(err,result){
+            var validationErrors = result.filter(function(item){
+                return item !== undefined;
+            });
+            if (err) {
                 return done(err);
             }
-            else{
-                return done(null, result);
+            else if(validationErrors.length > 0){
+                return done(null,{success:false, validationResults:validationErrors});
+            }
+            else {
+                return done(null, {success:true});
             }
         });
-
     },
 
-    validateNumber: function(number){
+    validateNumber: function (number) {
         return String(number).length != 0 && !number.match(/\D/g);
+    },
+    validateGradeNumberExistanceInDb: function (number,done) {
+        this.gradeFinder.findByNumber(number, function (err, result) {
+            if (result !== null) {
+                return done(null, true);
+            } else {
+                return done(null, false)
+            }
+        });
     }
 };
 
