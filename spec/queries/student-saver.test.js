@@ -27,7 +27,6 @@ describe('StudentSaver test', function () {
             var studentSaver = StudentSaverFactory.create();
             studentSaver.save(student, function (err, savedStudent) {
                 assert.isNotNull(savedStudent);
-
                 beforeDone();
             });
         });

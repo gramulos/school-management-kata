@@ -37,7 +37,9 @@ var ErrorCodes = {
     PATRONYMIC_IS_NOT_VALID:  ApplicationErrorFactory.create(125,'Patronymic is not valid'),
     ID_NUMBER_IS_NOT_VALID: ApplicationErrorFactory.create(126,'Id number is not valid'),
     CLASSROOM_NUMBER_IS_NOT_DEFINED:ApplicationErrorFactory.create(127,'Classroom is not valid'),
-    CLASSROOM_IS_ALREADY_EXISTING:ApplicationErrorFactory.create(128,'Classroom exists in the db')
+    CLASSROOM_IS_ALREADY_EXISTING:ApplicationErrorFactory.create(128,'Classroom exists in the db'),
+    GRADE_IS_NOT_DEFINED: ApplicationErrorFactory.create(129, 'Grade is null or empty'),
+    GRADE_IS_ALREADY_EXISTS: ApplicationErrorFactory.create(130, ' Grade is already exists')
 };
 
 module.exports = ErrorCodes;

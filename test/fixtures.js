@@ -10,6 +10,7 @@ var Fakes = require('../test/fakes');
 var DateProvider = require('../src/infra/date-provider');
 var UuidProvider = require('../src/infra/uuid-provider');
 var EmployeeFactory = require('../src/school/employee-factory');
+var GradeFactory = require('../src/school/grade-factory');
 var SchoolFactory = require('../src/school/school-factory');
 var ClassroomFactory = require('../src/school/classroom-factory');
 
@@ -231,6 +232,32 @@ var EmployeeBuilderTest = {
     }
 };
 
+var GradeBuilder = {
+    init: function() {
+        this.builder = {};
+
+        this.builder.number = '1';
+        this.builder.groups = {};
+        this.builder.plan = {}
+    },
+
+    build: function(){
+
+        return GradeFactory.createFromForm({gradeForm: this.builder});
+    },
+
+    buildForm: function() {
+        return {
+            number: this.builder.number
+        }
+    },
+
+    withNumber: function(number) {
+        this.builder.number = number;
+        return this;
+    }
+};
+
 var SchoolBuilder = {
     init:function(){
         this.builder = {};
@@ -300,7 +327,6 @@ var ClassroomBuilder = {
     }
 };
 
-
 var Fixtures = {
     user: {
         aUserForm: function () {
@@ -310,7 +336,6 @@ var Fixtures = {
         }
     },
     account: {
-
         anAccount: function () {
             var accountBuilder = Object.create(AccountBuilderTest);
             accountBuilder.init();
@@ -325,6 +350,7 @@ var Fixtures = {
             return validStudentForm;
         }
     },
+
     token: {
         ROOT_ADMIN_TOKEN: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIyM2U2ZGViMC1hZGVmLTExZTUtYTUwNS01YjAzMTU1NmE0NTAiLCJyb2xlIjo0LCJpYXQiOjE0NTE5OTI2MTZ9.7z6TV4nlX4nO2IXbeaKeZtMO5Q_XgrZ5jVcsVv-njFU',
         STUDENT_TOKEN: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIyM2U2ZGViMC1hZGVmLTExZTUtYTUwNS01YjAzMTU1NmE0NTAiLCJyb2xlIjoyLCJpYXQiOjE0NTEzODQ5OTN9.gTD79c4lgE5W752qjCkWkfwuduCtlfgXNRHZnpV8Mz0',
@@ -333,6 +359,7 @@ var Fixtures = {
             return invalidToken;
         }
     },
+
     employee: {
         anEmployee: function(role) {
             var employeeForm = Object.create(EmployeeBuilderTest);
@@ -340,6 +367,15 @@ var Fixtures = {
             return employeeForm;
         }
     },
+
+    grade: {
+        aGradeForm: function () {
+            var gradeForm = Object.create(GradeBuilder);
+            gradeForm.init();
+            return gradeForm;
+        }
+    },
+
     school:{
         aSchoolForm:function(){
             var schoolForm = Object.create(SchoolBuilder);
@@ -353,9 +389,9 @@ var Fixtures = {
             var classRoomForm = Object.create(ClassroomBuilder);
             classRoomForm.init();
             return classRoomForm;
+
         }
     }
-
 };
 
 module.exports = Fixtures;
