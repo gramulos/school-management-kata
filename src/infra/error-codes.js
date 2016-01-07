@@ -29,7 +29,8 @@ var ErrorCodes = {
     EMPLOYEE_IS_NOT_DEFINED: ApplicationErrorFactory.create(116, 'Employee is null or empty'),
     GRADE_IS_NOT_DEFINED: ApplicationErrorFactory.create(117, 'Grade is null or empty'),
     SCHOOL_IS_NOT_DEFINED: ApplicationErrorFactory.create(118,'School is null or empty'),
-    CLASSROOM_IS_NOT_DEFINED: ApplicationErrorFactory.create(119,'Classroom is null or empty')
+    CLASSROOM_IS_NOT_DEFINED: ApplicationErrorFactory.create(119,'Classroom is null or empty'),
+    GRADE_IS_ALREADY_EXISTS: ApplicationErrorFactory.create(120, ' Grade is already exists')
 };
 
 module.exports = ErrorCodes;

@@ -31,20 +31,30 @@ var GradeRegistrar = {
                 },
 
                 function authorize(account, next) {
+
                     var isAuthorized = self.authorizer.authorize(Actions.CREATE_GRADE, account);
                     return next(null, isAuthorized);
                 },
 
                 function validateGradeForm(isAuthorized, next) {
+
                     if (!isAuthorized) {
                         return next(ErrorCodes.HAS_NO_PERMISSION)
                     }
 
-                    var isFormValid = self.gradeRegistrationFormValidator.validate(registrationForm.gradeForm);
-                    return next(null, isFormValid);
+                    self.gradeRegistrationFormValidator.validate(registrationForm.gradeForm, function(err, isFormValid){
+                        if(err){
+                            return next(ErrorCodes.INVALID_FORM);
+                        }
+                        else{
+                            return next(null, isFormValid);
+                        }
+                    });
+
                 },
 
                 function registerGrade(isFormValid, next) {
+
                     if(!isFormValid){
                         return next(ErrorCodes.INVALID_FORM)
                     }
