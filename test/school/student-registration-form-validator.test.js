@@ -37,7 +37,7 @@ describe('StudentRegistrationFormValidator test', function () {
             studentForm = studentBuilder.aStudent().withGrade('').buildForm();
         });
 
-        it('should return true', function () {
+        it('should return false', function () {
             var validationResult = studentRegistrationForm.validate(studentForm);
             assert.isFalse(validationResult);
         });

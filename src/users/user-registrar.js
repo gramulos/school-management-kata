@@ -68,6 +68,7 @@ var UserRegistrar = {
             },
 
             function saveUser(createdUser, next) {
+                console.log('createdUser',createdUser)
 
                 self.userSaver.save(createdUser, next);
             }

@@ -11,7 +11,8 @@ var ClassroomSaver = {
         var classroomData = new ClassroomModel({
             id:classroom.id,
             number:classroom.number,
-            description:classroom.description
+            description:classroom.description,
+            createdDate: classroom.createdDate
         });
         classroomData.save(function(err,savedClassroom){
             if(err){

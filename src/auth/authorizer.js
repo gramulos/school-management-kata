@@ -26,7 +26,8 @@ var Authorizer = {
 
             case Roles.STUDENT:
                 return Actions.CREATE_STUDENT;
-
+            case Roles.TEACHER:
+                return Actions.CREATE_TEACHER;
         }
     }
 };

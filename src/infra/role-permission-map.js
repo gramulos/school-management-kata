@@ -14,7 +14,7 @@ var RolePermissionMap = {
                 return [Actions.CREATE_SCHOOL, Actions.CREATE_ADMIN];
 
             case Roles.ADMIN:
-                return [Actions.CREATE_STUDENT, Actions.CREATE_DIRECTOR, Actions.CREATE_ADMIN, Actions.CREATE_GRADE, Actions.CREATE_CLASSROOM];
+                return [Actions.CREATE_TEACHER, Actions.CREATE_STUDENT, Actions.CREATE_DIRECTOR, Actions.CREATE_ADMIN, Actions.CREATE_GRADE, Actions.CREATE_CLASSROOM];
 
             case Roles.DIRECTOR:
                 return [Actions.CREATE_STUDENT];

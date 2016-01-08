@@ -4,7 +4,7 @@ var chai = require('chai');
 var assert = chai.assert;
 chai.use(require('chai-shallow-deep-equal'));
 require('./test-helper');
-
+var mongoose = require('mongoose');
 var EmailSenderFactory = require('../src/infra/email-sender');
 var EmployeeRegistrarFactory = require('../src/school/employee-registrar');
 var UserFinderFactory = require('../src/users/user-finder');
@@ -87,7 +87,12 @@ describe('EmployeeRegistrar test', function(){
         });
 
         function clearDB(done) {
-            done();
+            for (var i in mongoose.connection.collections) {
+                mongoose.connection.collections[i].remove(function () {
+                });
+            }
+            return done();
         }
+
     });
 });

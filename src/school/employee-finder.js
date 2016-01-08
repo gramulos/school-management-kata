@@ -18,6 +18,17 @@ var EmployeeFinder = {
                 return done(null, foundEmployee);
             }
         });
+    },
+    findEmployeeByUserId:function(userId,done){
+        var Model = EmployeeFactory.getModel();
+        Model.findOne({userId: userId}, function (err, foundEmployee) {
+            if (err) {
+                return done(err);
+            }
+            else {
+                return done(null, foundEmployee);
+            }
+        });
     }
 };
 

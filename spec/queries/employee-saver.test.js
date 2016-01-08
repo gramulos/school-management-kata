@@ -24,7 +24,6 @@ describe('EmployeeSaver test', function () {
 
         before(function (beforeDone) {
             employee = employeeBuilder.anEmployee(Roles.DIRECTOR).build();
-
             var employeeSaver = EmployeeSaverFactory.create();
             employeeSaver.save(employee, function (err, savedEmployee) {
                 assert.isNotNull(savedEmployee);

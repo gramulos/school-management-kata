@@ -18,7 +18,8 @@ var Classroom = {
 var classroomSchema = new mongoose.Schema({
     id:{type:String, required:true},
     number:{type:String, required:true},
-    description:{type:String, required:false}
+    description:{type:String, required:false},
+    createdDate:{type: Date, required: true}
 
 });
 

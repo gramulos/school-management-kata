@@ -26,14 +26,17 @@ describe('Login manager test', function () {
 
     var dateProviderStub;
     var dateProviderFactorySpy;
-    dateProviderStub = DateProviderFactory.create();
-    sinon.stub(dateProviderStub, 'now', function() {
-        return new Date(2014, 11, 25);
-    });
-    dateProviderFactorySpy = sinon.stub(DateProviderFactory, 'create', function() {
-        return dateProviderStub;
-    });
 
+    before(function(beforeDone){
+        dateProviderStub = DateProviderFactory.create();
+        sinon.stub(dateProviderStub, 'now', function() {
+            return new Date(2014, 11, 25);
+        });
+        dateProviderFactorySpy = sinon.stub(DateProviderFactory, 'create', function() {
+            return dateProviderStub;
+        });
+        beforeDone();
+    });
     describe('#login as student - valid username and password', function () {
 
         var actualToken;

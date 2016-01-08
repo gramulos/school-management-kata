@@ -28,6 +28,12 @@ var EmailFactory = {
         var newEmail = Object.create(Email);
         newEmail.init(user);
         return newEmail;
+    },
+
+    createTeacherRegistrationEmail: function(teacher){
+        var newEmail = Object.create(Email);
+        newEmail.init(teacher);
+        return newEmail;
     }
 };
 

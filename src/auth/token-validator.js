@@ -11,9 +11,11 @@ var TokenValidator = {
         if(token){
             jwt.verify(token, Config.secretKey, function(err,decoded){
                 if(err){
+
                     return done(ErrorCodes.INVALID_TOKEN);
                 }
                 else{
+
                     //decoded.role = 1;
                     return done(null,decoded);
                 }

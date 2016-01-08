@@ -102,7 +102,6 @@ var UserBuilder = {
         this.user.email = email;
         return this;
     },
-
     build: function (account) {
 
 
@@ -330,6 +329,22 @@ var ClassroomBuilder = {
     }
 };
 
+var TeacherBuilder = {
+    init: function(){
+      this.builder = {};
+      this.builder.subject = 'Physics';
+      this.builder.isClassTeacher = true;
+    },
+    withSubject: function(subject){
+        this.builder.subject = subject;
+        return this;
+    },
+
+    buildForm: function(){
+       return this.builder;
+    }
+}
+
 var Fixtures = {
     user: {
         aUserForm: function () {
@@ -393,6 +408,14 @@ var Fixtures = {
             classRoomForm.init();
             return classRoomForm;
 
+        }
+    },
+
+    teacher:{
+        aTeacher:function(){
+            var teacherForm = Object.create(TeacherBuilder);
+            teacherForm.init();
+            return teacherForm;
         }
     }
 };

@@ -1,6 +1,7 @@
 'use strict';
 
-var REGEX_DIGIT = /\d/g;
+//var REGEX_DIGIT = /\d/g;
+var REGEX_DIGIT = /\D/g;
 var ErrorCodes = require('../infra/error-codes');
 var ClassroomFinderFactory = require('../school/classroom-finder');
 var async = require('async');
@@ -55,7 +56,7 @@ var ClassroomFormValidator = {
         });
     },
     validateNumber: function (roomNumber) {
-        if (!roomNumber.match(REGEX_DIGIT)) {
+        if (roomNumber.match(REGEX_DIGIT)) {
             return false;
         }
         return true;

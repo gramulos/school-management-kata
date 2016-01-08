@@ -13,7 +13,7 @@ var EmployeeRegistrationFormValidator = require('../school/employee-registration
 var EmployeeSaverFactory = require('./employee-saver');
 var EmployeeCreatorFactory = require('./employee-factory');
 var _ = require('lodash');
-
+var Actions = require('../infra/actions')
 var EmployeeRegistrar = {
 
     init: function (args) {
@@ -28,6 +28,7 @@ var EmployeeRegistrar = {
     },
 
     register: function (token, registrationForm, done) {
+        this.employee;
 
         var self = this;
 
@@ -38,7 +39,7 @@ var EmployeeRegistrar = {
 
                 function authorize(account, next) {
                     var action = self.authorizer.convertRoleToAction(registrationForm.employeeForm.role);
-                    var isAuthorized = self.authorizer.authorize(action, account);
+                    var isAuthorized = self.authorizer.authorize(action,account);
                     return next(null, isAuthorized);
                 },
 
@@ -55,7 +56,7 @@ var EmployeeRegistrar = {
                     if(!isFormValid){
                         return next(ErrorCodes.INVALID_FORM)
                     }
-
+                    console.log('}}}',registrationForm.employeeForm)
                     self.userRegistrar.register(registrationForm.employeeForm.role, registrationForm.userForm, next);
                 },
 
@@ -78,6 +79,8 @@ var EmployeeRegistrar = {
                 },
 
                 function sendEmailToEmployee(employee, next) {
+                    self.employee = employee;
+
                     self.emailSender.send(
                         EmailFactory.createEmployeeRegistrationEmail(employee),
                         next);
@@ -88,7 +91,8 @@ var EmployeeRegistrar = {
                     return done(err);
                 }
                 else {
-                    return done(null, result);
+
+                    return done(null,  {employee: self.employee, isSend:result});
                 }
             });
     }

@@ -44,7 +44,9 @@ var ErrorCodes = {
     ADDRESS_IS_NOT_VALID: ApplicationErrorFactory.create(132, 'Address is not valid'),
     USER_IS_ALREADY_EXISTING: ApplicationErrorFactory.create(133, 'User exists in the db'),
     SALARY_IS_NOT_DEFINED: ApplicationErrorFactory.create(134, 'Salary is not defined'),
-    GRADE_NUMBER_IS_NOT_VALID:ApplicationErrorFactory.create(135,'Grade number is not valid')
+    GRADE_NUMBER_IS_NOT_VALID:ApplicationErrorFactory.create(135,'Grade number is not valid'),
+    Employee_NOT_SAVED:ApplicationErrorFactory.create(136,'Employee is not saved'),
+    TEACHER_IS_NOT_DEFINED:ApplicationErrorFactory.create(137,'Teacher is null or empty')
 };
 
 module.exports = ErrorCodes;
