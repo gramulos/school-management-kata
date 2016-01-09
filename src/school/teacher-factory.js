@@ -28,9 +28,9 @@ var TeacherSchema = new mongoose.Schema({
 var TeacherModel = mongoose.model('TeacherModel',TeacherSchema);
 
 var TeacherFactory = {
-    create:function(){
+    create:function(args){
         var teacher = Object.create(Teacher);
-        teacher.init();
+        teacher.init(args);
         return teacher;
     },
     createFromForm:function(teacherForm){

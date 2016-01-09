@@ -13,7 +13,17 @@ var TeacherFinder = {
                 return done(err);
             }
             return done(null,foundTeacher);
-        })
+        });
+    },
+
+     findTeacherById: function(teacherID,done){
+        var Model = TeacherFactory.getModel();
+        Model.findOne({id: teacherID}, function(err, foundTeacher){
+            if(err){
+                return done(err);
+            }
+            return done(null,foundTeacher);
+        });
     }
 };
 

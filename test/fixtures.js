@@ -1,3 +1,4 @@
+'use strict';
 var _ = require('lodash');
 
 var INVALID_ID_NUMBER = '4s8a4f9d8e';
@@ -13,7 +14,8 @@ var EmployeeFactory = require('../src/school/employee-factory');
 var GradeFactory = require('../src/school/grade-factory');
 var SchoolFactory = require('../src/school/school-factory');
 var ClassroomFactory = require('../src/school/classroom-factory');
-
+var TeacherFactory = require('../src/school/teacher-factory');
+ 
 var AccountBuilderTest = {
     init: function () {
         this.builder = {};
@@ -342,8 +344,42 @@ var TeacherBuilder = {
 
     buildForm: function(){
        return this.builder;
+    },
+
+    build: function(employee){
+        var uuidProviderFake = Fakes.getUuidProviderFake();
+
+        if(!employee){
+
+
+            var employeeBuilder = Object.create(UserBuilder);
+            employeeBuilder.init();
+
+            employee = employeeBuilder.build(user);
+
+            var accountBuilder = Object.create(AccountBuilderTest);
+            accountBuilder.init();
+
+            var account = accountBuilder.build();
+
+
+            var userBuilder = Object.create(UserBuilder);
+            userBuilder.init();
+
+            var user = userBuilder.build(account);
+
+
+
+        }
+
+         return TeacherFactory.create({
+            id:uuidProviderFake.getValue(),
+            employeeId:employee.id,
+            subject:this.builder.subject,
+            isClassTeacher:this.builder.isClassTeacher
+        });
     }
-}
+};
 
 var Fixtures = {
     user: {
