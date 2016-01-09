@@ -42,7 +42,6 @@ var TeacherRegistrar = {
                 return next(null, isFormValid);
             },
             function registerEmployee(isFormValid, next) {
-                console.log('23',token,registrationForm)
                 if (!isFormValid) {
                     return next(ErrorCodes.INVALID_FORM);
                 }

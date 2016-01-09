@@ -5,7 +5,6 @@ var TeacherSaver = {
 
     },
     save: function (teacher,done) {
-        console.log('**',teacher)
         var TeacherModel = TeacherFactory.getModel();
 
         var teacherData = new TeacherModel({

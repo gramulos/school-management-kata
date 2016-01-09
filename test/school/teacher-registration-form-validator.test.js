@@ -41,7 +41,6 @@ describe('TeacherRegistrationFormValidatorFactory test', function () {
 
         it('should return false', function(){
             var validationResult = teacherRegistrationFormValidator.validate(teacherRegistrationForm);
-            console.log(teacherRegistrationForm)
             assert.isFalse(validationResult);
         })
 

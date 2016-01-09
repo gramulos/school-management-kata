@@ -96,7 +96,7 @@ describe('TeacherRegistrar test', function () {
 
                 testDone();
             })
-        });
+        });  
 
         it('employee should be created in db', function (testDone) {
             var employeeFinder = EmployeeFinderFactory.create();
@@ -110,9 +110,7 @@ describe('TeacherRegistrar test', function () {
 
         it('teacher should be created in db', function (testDone) {
             var teacherFinder = TeacherFinderFactory.create();
-            console.log('3333', actualEmployeeId)
             teacherFinder.findTeacherByEmployeeId(actualEmployeeId, function (err, teacher) {
-                console.log('ee', teacher)
                 assert.isNotNull(teacher);
                 testDone();
             })

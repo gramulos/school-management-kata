@@ -56,7 +56,6 @@ var EmployeeRegistrar = {
                     if(!isFormValid){
                         return next(ErrorCodes.INVALID_FORM)
                     }
-                    console.log('}}}',registrationForm.employeeForm)
                     self.userRegistrar.register(registrationForm.employeeForm.role, registrationForm.userForm, next);
                 },
 
